@@ -36,32 +36,22 @@ for k in range(N): # loop over control intervals
    opti.subject_to(q[:,k+1]==x_next) # close the gaps
 
 
-# ---- objective function --------
-f2 = lambda u: u**2 # integrand = u^2
-for k in range(N): # loop over control intervals
-   # Runge-Kutta 4 integration of objective function
-   k1 = f2(u[:,k]        )        
-   k2 = f2(u[:,k]+dt/2*k1)
-   k3 = f2(u[:,k]+dt/2*k2)
-   k4 = f2(u[:,k]+dt*k3, )
-   x_next = k1 + dt/6*(k1+2*k2+2*k3+k4)
-
-#test this now
-
 
 # ---- objective          ---------
-opti.minimize(x_next) # force squared
+opti.minimize(T) # force squared
 
 
 # ---- path constraints -----------
 opti.subject_to(u>=0)   # extension force only
 opti.subject_to(y>=0)   # body above ground
+opti.subject_to( opti.bounded(0,u,0.8) )  # bounded control
 
 # ---- boundary conditions --------
-opti.subject_to( y[ 0]==1)      # start w straight leg ...
-opti.subject_to( y[-1]==1)      # end   w straight leg ...
-opti.subject_to(yd[-1]==-yd[0]) # end   w start speed  ...
-#opti.subject_to(speed[0]==0) # ... from stand-still 
+opti.subject_to( y[ 0]==1)      # start w straight leg
+opti.subject_to( y[-1]==1)      # end   w straight leg
+opti.subject_to(yd[ 0]==-1)     # start speed
+opti.subject_to(yd[-1]==-yd[0]) # end   w start speed
+
 
 
 
