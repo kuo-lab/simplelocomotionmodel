@@ -46,9 +46,8 @@ for k in range(N): # loop over control intervals
    k4 = f2(u[:,k]+dt*k3, )
    x_next = k1 + dt/6*(k1+2*k2+2*k3+k4)
 
-#print("look!")
-#print(x_next)
-#print(dt/6*(k1+2*k2+2*k3+k4))
+#test this now
+
 
 # ---- objective          ---------
 opti.minimize(x_next) # force squared
