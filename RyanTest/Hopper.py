@@ -43,16 +43,14 @@ opti.minimize(T) # force squared
 
 # ---- path constraints -----------
 opti.subject_to(u>=0)   # extension force only
-opti.subject_to(y>=0)   # body above ground
-opti.subject_to( opti.bounded(0,u,0.8) )  # bounded control
+#opti.subject_to(y>=0)   # body above ground
+opti.subject_to( opti.bounded(0,u,3) )  # bounded control
 
 # ---- boundary conditions --------
 opti.subject_to( y[ 0]==1)      # start w straight leg
-opti.subject_to( y[-1]==1)      # end   w straight leg
+# opti.subject_to( y[-1]==1)      # end   w straight leg
 opti.subject_to(yd[ 0]==-1)     # start speed
 opti.subject_to(yd[-1]==-yd[0]) # end   w start speed
-
-
 
 
 # ---- misc. constraints  ----------
@@ -66,15 +64,25 @@ opti.subject_to(T>=0) # Time must be positive
 opti.solver("ipopt") # set numerical backend
 sol = opti.solve()   # actual solve
 
+
+# ---- OptSol outputs
+print(sol.value(T))
+
+
 # ---- post-processing        ------
 from pylab import plot, step, figure, legend, show, spy
+import numpy as np
+t1= np.linspace(0,sol.value(T),N+1)
+t2= np.linspace(0,sol.value(T),N  )
 
-plot(sol.value(yd),label="vrt vel")
-plot(sol.value(y ),label="vrt pos")
+
+
+plot(t1,sol.value(yd),label="vrt vel")
+plot(t1,sol.value(y ),label="vrt pos")
 legend(loc="upper left")
 #plot(limit(sol.value(y)),'r--',label="speed limit")
 figure()
-step(range(N),sol.value(u),'k',label="leg force")
+step(t2,sol.value(u),'k',label="leg force")
 legend(loc="upper left")
 
 #figure()
