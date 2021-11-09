@@ -24,8 +24,8 @@ Vo_dim= -sqrt(2*g*H_dim) # [m/s ] dimensional velocity at initial contact
 Tf_dim= -2*Vo_dim/g      # [s   ] flight time 
 tnd   =  sqrt(L/g)       # [s   ] time non-dimensional factor
 
-f = opti.parameter(); opti.set_value(f ,  2.00*tnd  ) # frequency
-Vo= opti.parameter(); opti.set_value(Vo, -1.00*tnd/L) # speed at initial contact
+f = opti.parameter(); opti.set_value(f ,  f_dim*tnd  ) # frequency
+Vo= opti.parameter(); opti.set_value(Vo, Vo_dim*tnd/L) # speed at initial contact
 T = 1/f        # [nd] total time duration
 Tf= Tf_dim/tnd # [nd] flight time
 
@@ -50,7 +50,8 @@ dt = Tc/N # length of a control interval
 
 
 # ---- dynamic constraints --------
-qd = lambda q,u: vertcat(q[1],q[2]-1,q[3],u[0]) # dq/dt = f(q,u)
+# ----------------------(   yd,    ydd,   Fd,  Fdd)
+qd = lambda q,u: vertcat( q[1], q[2]-1, q[3], u[0]) # dq/dt = f(q,u)
 
 for k in range(N): # loop over control intervals
    # Runge-Kutta 4 integration
@@ -76,14 +77,15 @@ opti.minimize(cumInt) # minimize objective function
 
 
 # ---- path constraints -----------
-opti.subject_to(   y>=0)      # body above ground
-opti.subject_to(  pP>=0)      # bounded control
-opti.subject_to(  qP>=0)      # bounded control
-opti.subject_to(pFdd>=0)      # bounded control
-opti.subject_to(qFdd>=0)      # bounded control
-opti.subject_to(P[0:N] ==pP  -qP  )   # power slack vars
-opti.subject_to(  Fdd  ==pFdd-qFdd)   # Fdd   slack vars
-opti.subject_to( opti.bounded(0,F,5))  # bounded control
+opti.subject_to(   y>=0)  # body above ground
+opti.subject_to(  pP>=0)  # bounded control
+opti.subject_to(  qP>=0)  # bounded control
+opti.subject_to(pFdd>=0)  # bounded control
+opti.subject_to(qFdd>=0)  # bounded control
+opti.subject_to(   F>=0)  # bounded control
+opti.subject_to(P[0:N] ==pP  -qP  )  # power slack vars
+opti.subject_to(  Fdd  ==pFdd-qFdd)  # Fdd   slack vars
+
 
 # ---- boundary conditions --------
 opti.subject_to( y[ 0]== L   ) # start w straight leg
@@ -111,6 +113,7 @@ sol = opti.solve()   # actual solve
 # ---- construct time vector --------------
 tq= np.linspace(0,sol.value(Tc),N+1) # time vector for states
 tu= np.linspace(0,sol.value(Tc)-sol.value(Tc)/N,N) # time vector for controls
+
 
 
 # ---- post-processing ------------
