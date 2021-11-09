@@ -6,7 +6,6 @@
 # For more information see: http://labs.casadi.org/OCP
 
 import sys
-import math
 import numpy as np
 from casadi import *
 from random import random
@@ -15,17 +14,15 @@ from random import random
 N = 100 # number of control intervals
 opti = Opti() # optimization problem
 
-# ---- problem parameters ---------
+#%% ---- problem parameters ---------
 M     = 80.00  # [kg  ] body mass
 g     =  9.81  # [m/s2] gravitational acc
 L     =  1.00  # [m   ] leg length
 v_dim =  3.00  # [m/s ] speed
 f_dim =  3.00  # [Hz  ] step frequency
 
-d_dim = v_dim/f_dim  # [m ] step length
-# Vo_dim= -sqrt(2*g*H_dim) # [m/s ] dimensional velocity at initial contact
-# Tf_dim= -2*Vo_dim/g      # [s   ] flight time 
-tnd   =  sqrt(L/g)       # [s   ] time non-dimensional factor
+d_dim = v_dim/f_dim     # [m ] step length
+tnd   = sqrt(L/g)  # [s   ] time non-dimensional factor
 
 f = opti.parameter(); opti.set_value(f ,  f_dim*tnd  ) # step frequency
 d = opti.parameter(); opti.set_value(d ,  d_dim/L    ) # step length
@@ -49,23 +46,25 @@ qP  = u[2,:] # neg leg power
 pFdd= u[3,:] # pos force rate2
 qFdd= u[4,:] # neg force rate2
 
-Ll = sqrt((xb-xf)**2+yb**2)   # leg length
-Lld= ((xb-xf)*xbd+yb*ybd)/Ll  # leg velocity
+Ll = sqrt((xb-xf)**2+yb**2)  # leg length
+Lld= ((xb-xf)*xbd+yb*ybd)/Ll      # leg velocity
 cTh= (xb-xf)/Ll # cos(Th) where Th is + ccw from -->
 sTh= (yb   )/Ll # sin(Th) where Th is + ccw from -->
 
+# energetics
+P= F*Lld # leg power
 
 
 dt = Tc/N # length of a control interval
 
 
-# ---- dynamic constraints --------
-qd = lambda q,u,xf: vertcat(  q[1]                                      , # xbd 
+#%% ---- dynamic constraints --------
+qd = lambda q,u,xf: vertcat(  q[1]                                           , # xbd 
                              (q[0]-xf)/sqrt((q[0]-xf)**2+q[2]**2)*q[4]  , # xbdd
-                              q[3]                                      , # ybd
+                              q[3]                                           , # ybd
                              (q[2]   )/sqrt((q[0]-xf)**2+q[2]**2)*q[4]-1, # ybdd
-                              q[5]                                      , # Fd
-                              u[0]                                      ) # Fdd
+                              q[5]                                           , # Fd
+                              u[0]                                           ) # Fdd
 
 for k in range(N): # loop over control intervals
    # Runge-Kutta 4 integration
@@ -77,9 +76,9 @@ for k in range(N): # loop over control intervals
    opti.subject_to(q[:,k+1]==x_next) # close the gaps
 
 
-P= F*Lld # leg power
 
-# ---- Integrate for Objective Function --------
+
+#%% ---- Integrate for Objective Function --------
 Int_pP   = lambda              pP:  pP         # (+) power
 Int_qP   = lambda              qP:  qP         # (-) power
 Int_Fdd  = lambda       pFdd,qFdd:  pFdd+qFdd  # Fdd
@@ -96,6 +95,7 @@ for k in range(1,N): # loop over control intervals
 opti.minimize(Cum_pP/0.25 + Cum_qP/1.20 + 5e-3*Cum_Fdd + Cum_comp) # minimize objective function
 
 
+#%% ============================================================== Constraints
 # ---- path constraints -----------
 opti.subject_to(  yb>=0)  # body above ground
 opti.subject_to(   F>=0)  # extension force only
@@ -124,7 +124,7 @@ opti.subject_to( yb[0]== yb[-1] + ybd[-1]*(ybd[-1]-ybd[0]) - 0.5*(ybd[-1]-ybd[0]
 # ---- misc. constraints  ----------
 opti.subject_to(Tc<=T) # time of contact <= than step time
 
-# ---- initial values for solver ---
+#%% ---- initial values for solver ---
 opti.set_initial(xb , random())
 opti.set_initial(xbd, random())
 opti.set_initial(yb , random())
@@ -132,20 +132,12 @@ opti.set_initial(ybd, random())
 #opti.set_initial(Tc, 1)
 
 
-# ---- solve NLP -------------------
+#%% ---- solve NLP -------------------
 opti.solver("ipopt") # set numerical backend
 sol = opti.solve()   # actual solve
 
 
-# ---- outputs ----------------------------
-print("Look!")
-print(sol.value(xf)*L)
-print([sol.value( xb[0])*L     , sol.value( xb[-1])*L    ])
-print([sol.value(xbd[0])*L/tnd , sol.value(xbd[-1])*L/tnd])
-print([sol.value( yb[0])*L     , sol.value( yb[-1])*L    ])
-print([sol.value(ybd[0])*L/tnd , sol.value(ybd[-1])*L/tnd])
-print([sol.value(T)*tnd, sol.value(Tc)*tnd, sol.value((ybd[-1] - ybd[0]))*L/tnd, sol.value(d)*L])
-print([sol.value(Cum_pP), sol.value(Cum_qP), sol.value(Cum_Fdd), sol.value(Cum_comp)])
+#%% ---- outputs ----------------------------
 
 
 # ---- construct time vector --------------
@@ -153,15 +145,18 @@ tq= np.linspace(0,sol.value(Tc),N+1) # time vector for states
 tu= np.linspace(0,sol.value(Tc)-sol.value(Tc)/N,N) # time vector for controls
 
 
-# ---- post-processing ------------
-from pylab import plot, step, figure, legend, show, spy
+#%% ==================================================================== Plots
+from pylab import plot, figure, legend, show
 
+# kinematics
 plot(tq,sol.value(xb ),label="xb(t)")
 plot(tq,sol.value(xbd),label="xbd(t)")
 legend(loc="upper left")
 plot(tq,sol.value(yb ),label="yb(t)")
 plot(tq,sol.value(ybd),label="ybd(t)")
 legend(loc="upper left")
+
+# Force/controls
 figure()
 plot(tq,sol.value(F ),label="F(t)")
 legend(loc="upper left")
@@ -172,6 +167,7 @@ figure()
 plot(tu,sol.value(Fdd),label="Fdd(t)")
 legend(loc="upper left")
 
+# Slack vars (check)
 figure()
 plot(tq, sol.value( P),label="P(t)")
 plot(tu, sol.value(pP),label="P(+)")
