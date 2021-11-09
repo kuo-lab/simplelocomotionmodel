@@ -31,20 +31,26 @@ Tf= Tf_dim/tnd # [nd] flight time
 
 
 # ---- decision variables ---------
-q = opti.variable(3,N+1) # state trajectory
-y = q[0,:] # vrt pos
-yd= q[1,:] # vrt vel
-F = q[2,:] # leg force
-u = opti.variable(1,N) # control var
-Fd= u[0,:]             # leg force rate
-Tc = opti.variable()   # final time
+q = opti.variable(4,N+1) # state trajectory
+u = opti.variable(5,N  ) # control var
+Tc= opti.variable()      # final time
+y   = q[0,:] # vrt pos
+yd  = q[1,:] # vrt vel
+F   = q[2,:] # leg force
+Fd  = q[3,:] # leg force rate
+Fdd = u[0,:] # leg force rate2
+pP  = u[1,:] # pos leg power
+qP  = u[2,:] # neg leg power
+pFdd= u[3,:] # pos force rate2
+qFdd= u[4,:] # neg force rate2
+
 
 
 dt = Tc/N # length of a control interval
 
 
 # ---- dynamic constraints --------
-qd = lambda q,u: vertcat(q[1],q[2]-1,u[0]) # dq/dt = f(q,u)
+qd = lambda q,u: vertcat(q[1],q[2]-1,q[3],u[0]) # dq/dt = f(q,u)
 
 for k in range(N): # loop over control intervals
    # Runge-Kutta 4 integration
@@ -57,21 +63,27 @@ for k in range(N): # loop over control intervals
 
 
 P= F*yd # leg power
-Int = lambda u: vertcat(u**2) # J = u^2
-cumInt= 0
-# ---- Integrate for Objective Function --------
-for k in range(N): # loop over control intervals
-   # Rectangle Rule 4 integration
-   cumInt = cumInt + dt*(Int(u[:,k]))
 
+# ---- Integrate for Objective Function --------
+Int = lambda pP,qP,pFdd,qFdd:  pP+qP + pFdd+qFdd + pP*qP + pFdd*qFdd # J = |power| + |Fdd| & complementarity
+cumInt= 0
+for k in range(1,N): # loop over control intervals
+   cumInt = cumInt + dt*( Int(pP[:,k-1],qP[:,k-1],pFdd[:,k-1],qFdd[:,k-1]) + \
+                          Int(pP[:,k  ],qP[:,k  ],pFdd[:,k  ],qFdd[:,k  ]) )/2
 
 # ---- objective ------------------
 opti.minimize(cumInt) # minimize objective function
 
 
 # ---- path constraints -----------
-opti.subject_to(y>=0)   # body above ground
-opti.subject_to( opti.bounded(0,F,5) )  # bounded control
+opti.subject_to(   y>=0)      # body above ground
+opti.subject_to(  pP>=0)      # bounded control
+opti.subject_to(  qP>=0)      # bounded control
+opti.subject_to(pFdd>=0)      # bounded control
+opti.subject_to(qFdd>=0)      # bounded control
+opti.subject_to(P[0:N] ==pP  -qP  )   # power slack vars
+opti.subject_to(  Fdd  ==pFdd-qFdd)   # Fdd   slack vars
+opti.subject_to( opti.bounded(0,F,5))  # bounded control
 
 # ---- boundary conditions --------
 opti.subject_to( y[ 0]== L   ) # start w straight leg
@@ -97,8 +109,8 @@ sol = opti.solve()   # actual solve
 
 
 # ---- construct time vector --------------
-tq= np.linspace(0,sol.value(T),N+1) # time vector for states
-tu= np.linspace(0,sol.value(T),N  ) # time vector for controls
+tq= np.linspace(0,sol.value(Tc),N+1) # time vector for states
+tu= np.linspace(0,sol.value(Tc)-sol.value(Tc)/N,N) # time vector for controls
 
 
 # ---- post-processing ------------
@@ -111,9 +123,17 @@ figure()
 plot(tq,sol.value(F ),label="F(t)")
 legend(loc="upper left")
 figure()
-plot(tu,sol.value(Fd),label="Fd(t)")
+plot(tq,sol.value(Fd),label="Fd(t)")
+legend(loc="upper left")
+figure()
+plot(tu,sol.value(Fdd),label="Fdd(t)")
 legend(loc="upper left")
 
+figure()
+plot(tq, sol.value( P),label="P(t)")
+plot(tu, sol.value(pP),label="P(+)")
+plot(tu,-sol.value(qP),label="P(-)")
+legend(loc="upper left")
 
 #figure()
 #spy(sol.value(jacobian(opti.g,opti.x)))
