@@ -3,6 +3,8 @@
 # An optimal control problem (OCP),
 # solved with direct multiple-shooting.
 #
+# Uses Hermite Simpson
+#
 # For more information see: http://labs.casadi.org/OCP
 
 import sys

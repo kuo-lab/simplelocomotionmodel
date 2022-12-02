@@ -1,0 +1,87 @@
+---
+title: "DynLoco demo"
+format: 
+     html:
+          code-fold: true
+jupyter: julia-1.8
+---
+## Perform short walks of a range of distances
+Take walks of varying distances, and show how the optimal trajectory has an inverted-U 
+velocity profile, with peak speed that increases with distance up to about 12 steps.
+The cost function is total work, plus a linear cost of time with coefficient ctime.
+
+```{julia}
+#| fig-cap: "Short walks of varying distance"
+#| fig-cap: "Speed vs time for short walks; each trace is a different bout distance"
+using DynLoco, Plots; plotlyjs()
+
+wstar4 = findgait(WalkRW2l(α=0.35,safety=true), target=:speed=>0.3, varying=:P)
+ctime = 0.015 # cost of time, to encourage hurrying
+tchange = 1.75 # boundary condition time to get up to speed (arbitrary, excluded from optimization) 
+p = plot() 
+walksteps = [1, 2, 3, 4, 5, 6, 7, 10, 15, 20] # take walks of this # of steps
+results = Array{MultiStepResults,1}(undef,0) # store each optimization result here
+for (i,nsteps) in enumerate(walksteps)
+    result = optwalktime(wstar4, nsteps, ctime=ctime) # optimize with a cost of time
+    plotvees!(result, tchange=tchange, usespline=false, color=i, speedtype=:shortwalks, rampuporder=1, markersize=2) # plot instantaneous body speed vs. time
+    push!(results, result) # add this optimization to results array
+end
+Plots.display(p) # instantaneous speed vs. distance profiles
+```
+## Compare three objectives: Energy-Time, min-COT, constant accel
+Walk a fixed number of steps, starting and ending at rest. The
+objectives are:
+
+* **Energy-Time** minimizes total energy (positive work) plus proportional time cost
+* **min-COT** minimizes cost of transport (energy per weight and distance traveled)
+* **Constant accel** accelerates at a constant rate, to yield a triangular speed profile. Uses a minimum variance objective to 
+produce a constant rate of velocity change.
+
+Compare for a fixed number of steps.
+```{julia}
+## Triangle walk, based on min var walk
+wstar4s = findgait(WalkRW2l(α=0.35,safety=true), target=:speed=>0.5, varying=:P)
+wstar4n = findgait(WalkRW2l(α=0.35, safety=true), target=:speed=>0.4, varying=:P)
+nsteps = 10
+ctime = 0.0195
+tchange = 1.75
+nominalmsr=optwalktime(wstar4n, nsteps, ctime = ctime, boundarywork=true) # to compare with our usual solution
+minvarmsr=optwalkvar(wstar4n, nsteps, boundarywork=true)
+A = 1.9*wstar4s.vm/(nsteps*onestep(wstar4s).tf)
+v0 = 0.11#0.8*A*tchange#0.12
+mintrimsr=optwalktriangle(wstar4n, nsteps, A = A, boundarywork=false,boundaryvels=(v0,v0))
+p = plot(layout=(1,2))
+plotvees!(p[1],nominalmsr, tchange=tchange, rampuporder=1, usespline = false, markershape=:circle,speedtype=:shortwalks)
+plotvees!(p[1],minvarmsr, tchange=tchange, rampuporder=1, usespline = false,markershape=:circle, speedtype=:shortwalks)
+plotvees!(p[1],mintrimsr, tchange=tchange, rampuporder=1, usespline = false,markershape=:circle, speedtype=:shortwalks)
+plot!(p[2],[0:nsteps+1], [1/2*nominalmsr.vm0^2; nominalmsr.steps.Pwork; NaN],markershape=:circle)
+plot!(p[2],[0:nsteps+1], [1/2*minvarmsr.vm0^2; minvarmsr.steps.Pwork; NaN],markershape=:circle,xticks=0:nsteps+1)
+plot!(p[2],[0:nsteps+1], [1/2*mintrimsr.vm0^2; mintrimsr.steps.Pwork; NaN],markershape=:circle,xticks=0:nsteps+1)
+plot!(p[2],xlabel="step", ylabel="push-off work", legend=false)
+energytimework = 1/2*nominalmsr.vm0^2 + sum(nominalmsr.steps.Pwork)
+mincotwork = 1/2*minvarmsr.vm0^2 + sum(minvarmsr.steps.Pwork)
+trianglework = (1/2*mintrimsr.vm0^2 + sum(mintrimsr.steps.Pwork))/(1/2*nominalmsr.vm0^2 + sum(nominalmsr.steps.Pwork))
+Plots.display(p)
+```
+Quantify the three predictions.
+```{julia}
+using Markdown
+println("energy-time work = ", 1/2*nominalmsr.vm0^2 + sum(nominalmsr.steps.Pwork))
+println("min-COT = ", 1/2*minvarmsr.vm0^2 + sum(minvarmsr.steps.Pwork))
+println("triangle   = ", 1/2*mintrimsr.vm0^2 + sum(mintrimsr.steps.Pwork))
+println("ratio = ",  (1/2*minvarmsr.vm0^2 + sum(minvarmsr.steps.Pwork))/(1/2*nominalmsr.vm0^2 + sum(nominalmsr.steps.Pwork)) )
+println("ratio = ",  (1/2*mintrimsr.vm0^2 + sum(mintrimsr.steps.Pwork))/(1/2*nominalmsr.vm0^2 + sum(nominalmsr.steps.Pwork)) )
+#println("ratio = ",  (sum(minvarmsr.steps.Pwork))/(sum(nominalmsr.steps.Pwork)) )
+
+threecosts = [1/2*nominalmsr.vm0^2 + sum(nominalmsr.steps.Pwork), 1/2*minvarmsr.vm0^2 + sum(minvarmsr.steps.Pwork), 1/2*mintrimsr.vm0^2 + sum(mintrimsr.steps.Pwork)]
+bar(threecosts,xticks=((1,2,3),("Energy-Time", "Steady min-COT", "Steady accel")),legend=false)
+```
+
+```{julia}
+using Markdown
+Markdown.parse("""
+The energy-time work is $(threecosts[1]). 
+The min-COT work is $(threecosts[2]).
+The const accel work is $(threecosts[3]).
+""")
+```
