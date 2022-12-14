@@ -242,6 +242,185 @@ ratio = 1.3062066266818573</code></pre>
 </div>
 </div>
 </section>
+<section id="brachistokuo-ramp" class="level2">
+<h2 class="anchored" data-anchor-id="brachistokuo-ramp">Brachistokuo ramp</h2>
+<p>Optimal slope and walk with ramp, compared with flat walking in same amount of time. We find six steps to be pretty good. Longer walks yield a smaller differene because there’s more time spent at a steady speed. Note: Currently solving for an asymmetric ramp profile, because pure symmetry constraint is slightly overconstrained for latest Ipopt.</p>
+<div class="cell" data-execution_count="5">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>wstar <span class="op">=</span> <span class="fu">findgait</span>(<span class="fu">WalkRW2l</span>(α<span class="op">=</span><span class="fl">0.35</span>,safety<span class="op">=</span><span class="cn">true</span>), target<span class="op">=:</span>speed<span class="op">=&gt;</span><span class="fl">0.4</span>, varying<span class="op">=:</span>P)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="fl">6</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>walktime <span class="op">=</span> N <span class="op">*</span> <span class="fu">onestep</span>(wstar).tf <span class="op">*</span><span class="fl">0.82</span> <span class="co"># meant to be a brisk walk</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>walkdistance <span class="op">=</span> N <span class="op">*</span> <span class="fu">onestep</span>(wstar).steplength</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>rampresult <span class="op">=</span> <span class="fu">optwalkslope</span>(wstar, N, boundaryvels <span class="op">=</span> (<span class="fl">0</span>., <span class="fl">0</span>.), symmetric <span class="op">=</span> <span class="cn">false</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    totaltime <span class="op">=</span> walktime)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> <span class="fu">multistepplot</span>(rampresult; plotwork<span class="op">=</span><span class="cn">true</span>, label<span class="op">=</span><span class="st">"ramp"</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"ramp total cost = "</span>, rampresult.totalcost)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>flatresult <span class="op">=</span> <span class="fu">optwalk</span>(wstar, N, boundaryvels <span class="op">=</span> (<span class="fl">0</span>., <span class="fl">0</span>.),</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    totaltime <span class="op">=</span> rampresult.totaltime, δs <span class="op">=</span> <span class="fu">zeros</span>(<span class="fl">6</span>))</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"flat total cost = "</span>, flatresult.totalcost)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="fu">multistepplot!</span>(flatresult; plotwork<span class="op">=</span><span class="cn">true</span>, label<span class="op">=</span><span class="st">"flat"</span>)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co"># optionally, try a reversed ramp and see if it's higher cost still</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="co">#concaveresult = optwalk(wstar, 6, boundaryvels = (0.,0.), boundarywork=true,</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co">#    totaltime = rampresult.totaltime, δ = -rampresult.δangles)</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="co">#multistepplot!(concaveresult; plotwork=true)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>ramp total cost = 0.1870530240274279
+flat total cost = </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0.21330138986318115</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<p><img src="demo_files/figure-html/cell-6-output-3.svg" class="img-fluid"></p>
+</div>
+</div>
+<section id="brachistokuo-ramp-compute-the-cost-for-different-speeds" class="level3">
+<h3 class="anchored" data-anchor-id="brachistokuo-ramp-compute-the-cost-for-different-speeds">Brachistokuo ramp: Compute the cost for different speeds</h3>
+<div class="cell" data-execution_count="6">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>walktimes <span class="op">=</span> (<span class="fl">0.8</span><span class="op">:</span><span class="fl">0.05</span><span class="op">:</span><span class="fl">1.2</span>) <span class="op">*</span> <span class="fu">N*onestep</span>(wstar).tf</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>rampresults <span class="op">=</span> <span class="fu">Array</span><span class="dt">{MultiStepResults,1}</span>(<span class="cn">undef</span>, <span class="fu">length</span>(walktimes))</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>flatresults <span class="op">=</span> <span class="fu">Array</span><span class="dt">{MultiStepResults,1}</span>(<span class="cn">undef</span>, <span class="fu">length</span>(walktimes))</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i,walktime) <span class="kw">in</span> <span class="fu">enumerate</span>(walktimes)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    rampresults[i] <span class="op">=</span> <span class="fu">optwalk</span>(wstar, N, boundaryvels <span class="op">=</span> (<span class="fl">0</span>.,<span class="fl">0</span>.),</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        totaltime <span class="op">=</span> walktime, δs <span class="op">=</span> rampresult.δangles)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    flatresults[i] <span class="op">=</span> <span class="fu">optwalk</span>(wstar, N, boundaryvels <span class="op">=</span> (<span class="fl">0</span>.,<span class="fl">0</span>.),</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>        totaltime <span class="op">=</span> walktime, δs <span class="op">=</span> <span class="fu">zeros</span>(N))</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co"># plot totalcost vs average speed</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(walkdistance <span class="op">./</span> walktimes, [<span class="fu">getfield</span>.(rampresults, <span class="op">:</span>totalcost), <span class="fu">getfield</span>.(flatresults, <span class="op">:</span>totalcost)],</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    xlabel<span class="op">=</span><span class="st">"Average speed"</span>, ylabel<span class="op">=</span><span class="st">"Total Work"</span>, labels<span class="op">=</span>[<span class="st">"Ramp"</span> <span class="st">"Flat"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<p><img src="demo_files/figure-html/cell-7-output-1.svg" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="plot-the-ramp-to-scale" class="level3">
+<h3 class="anchored" data-anchor-id="plot-the-ramp-to-scale">Plot the ramp to scale</h3>
+<div class="cell" data-execution_count="7">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">onestep</span>(wstar).steplength <span class="op">.*</span> (<span class="fl">0</span><span class="op">:</span><span class="fl">6</span>),<span class="fu">cumsum</span>(<span class="fu">tan</span>.([<span class="fl">0</span>;rampresult.δangles])<span class="op">.*</span><span class="fu">onestep</span>(wstar).steplength),</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    aspect_ratio<span class="op">=</span><span class="fl">1</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>sl <span class="op">=</span> <span class="fu">onestep</span>(wstar).steplength</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sl <span class="op">.*</span> [<span class="fl">0</span>; <span class="fu">cumsum</span>(<span class="fu">cos</span>.(rampresult.δangles))],[<span class="fl">0</span>; <span class="fu">cumsum</span>(<span class="fu">sin</span>.(rampresult.δangles))]<span class="op">.*</span>sl,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    aspect_ratio<span class="op">=</span><span class="fl">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<p><img src="demo_files/figure-html/cell-8-output-1.svg" class="img-fluid"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="short-walks-of-varying-slope" class="level2">
+<h2 class="anchored" data-anchor-id="short-walks-of-varying-slope">Short walks of varying slope</h2>
+<p>To be compared with Emily’s data</p>
+<div class="cell" data-execution_count="8">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>wstar4s <span class="op">=</span> <span class="fu">findgait</span>(<span class="fu">WalkRW2l</span>(α<span class="op">=</span><span class="fl">0.4</span>,safety<span class="op">=</span><span class="cn">true</span>), target<span class="op">=:</span>speed<span class="op">=&gt;</span><span class="fl">0.4</span>, varying<span class="op">=:</span>P)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>myslopes <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">0.02</span><span class="op">:</span><span class="fl">0.08</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> <span class="fu">plot</span>(layout<span class="op">=</span>(<span class="fl">2</span>,<span class="fl">1</span>))</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>nsteps <span class="op">=</span> <span class="fl">6</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>startv <span class="op">=</span> wstar4.vm</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> slope <span class="kw">in</span> myslopes</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># walk up a slope</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    resultup <span class="op">=</span> <span class="fu">optwalktime</span>(wstar4s, nsteps, ctime <span class="op">=</span> ctime, δs<span class="op">=</span><span class="fu">fill</span>(slope, nsteps))</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plotvees!</span>(p[<span class="fl">1</span>],resultup, tchange<span class="op">=</span><span class="fl">1</span>, title<span class="op">=</span><span class="st">"Up"</span>, rampuporder<span class="op">=</span><span class="fl">1</span>)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    startv <span class="op">=</span> [resultup.vm0;resultup.steps.vm]</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Walk down a slope</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    resultdown <span class="op">=</span> <span class="fu">optwalktime</span>(wstar4s, nsteps, ctime <span class="op">=</span> ctime, δs<span class="op">=</span><span class="fu">fill</span>(<span class="op">-</span>slope, nsteps))</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plotvees!</span>(p[<span class="fl">2</span>],resultdown, tchange<span class="op">=</span><span class="fl">1</span>, title<span class="op">=</span><span class="st">"Down"</span>, rampuporder<span class="op">=</span><span class="fl">1</span>)</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>Plots.<span class="fu">display</span>(p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>times </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[0.0, 2.442996751011905, 4.43492795426176, 6.3285530856496734, 8.221830737800136, 10.212322734043118, 12.649534456102629, 13.649534456102629]
+v = [0.0, 0.31880381514821987, 0.39099577502808397, 0.4112940157519249, 0.4113695018438875, 0.39127848094206935, 0.31956053615201, 0.0]
+3.3697605293837327</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code> 14.205090011658186 2.9329674287413514
+times [0.0, 2.442996751011905, 4.43492795426176, 6.3285530856496734, 8.221830737800136, 10.212322734043118, 12.649534456102629, 13.649534456102629]
+v = [0.0, 0.31880381514821987, 0.39099577502808397, 0.4112940157519249, 0.4113695018438875, 0.39127848094206935, 0.31956053615201, 0.0]
+3.3697605293837327 14.205090011658186 2.9329674287413514
+times [0.0, 2.332949074464901, 4.296874719473847, 6.175963486654021, 8.061944957439469, 10.056925731019561, 12.577071236657874, 13.577071236657874]
+v = [0.0, 0.3338421284639227, 0.3965713705081505, 0.41447572792745174, 0.4129609419189796, 0.39039809051374436, 0.3090443321128929, 0.0]
+2.6361085644425932 14.132626792213431 3.636108564442594
+times </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[0.0, 2.527199585244839, 4.523877806523506, 6.41032790942487, 8.289179620574764, 10.25188800146023, 12.580119703048876, 13.580119703048876]
+v = [0.0, 0.3081817079919496, 0.3900661991087056, 0.41285835412208816, 0.41452802261900584, 0.3968173225336374, 0.33451854645131324, 0.0]
+3.351493489106429 14.135675258604433 2.922007204574969
+times [0.0, 2.201298980646913, 4.114349358571499, 5.957931998555288, 7.8160866685070545, 9.794043380695129, 12.371747668313947, 13.371747668313947]
+v = [0.0, 0.3538077705321147, 0.4071177077219674, 0.42245824392453046, 0.41914523974342655, 0.3937582050295373, 0.30214353460099946, 0.0]
+2.5928825500543984 13.927303223869504 3.5928825500543997
+times [0.0, 2.585942002177281, 4.565705378865095, 6.424283685236989, 8.26754630661788, 10.179355543863437, 12.376464617148025, 13.376464617148025]
+v = [0.0, 0.30118103343444874, 0.3933988747283079, 0.4190497015633729, 0.4225315891415576, 0.40738200728615154, 0.35448248522908876, 0.0]
+3.890813387871306 13.709797950481358 2.0747155737348795
+times [0.0, 2.0576806206836293, 3.900372015034872, 5.690270558236855, 7.502885917794261, 9.445365947111993, 12.058322642833854, 13.058322642833854]
+v = [0.0, 0.3785022207958327, 0.4226625722596955, 0.4351289560938049, 0.4296756509927581, 0.40094964831677393, 0.2980671994650633, 0.0]
+1.8396181950673336 13.613878198389411 3.526898334163853
+times </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[0.0, 2.622112937640853, 4.566226914836328, 6.378926798267447, 8.168094708725883, 10.00911720674641, 12.062424500255128, 13.062424500255128]
+v = [0.0, 0.2970263688634365, 0.4006126666199012, 0.42965561576751565, 0.4353066473329159, 0.4230457180478286, 0.37930839045840775, 0.0]
+3.7916428246419698 13.39575783358846 2.041658719325101
+times [0.0, 1.91395131605842, 3.673214655664929, 5.396074540839549, 7.149730090869841, 9.042337217592388, 11.672297637675179, 12.672297637675179]
+v = [0.0, 0.40692606864276604, 0.44270614130542957, 0.45206037433413365, 0.4441218143459514, 0.41151524456426575, 0.2961400782574453, 0.0]
+1.1117038449014807 13.227853193230736 4.112592945587036
+times [0.0, 2.639684003270013, 4.533414858539329, 6.28648636989119, 8.0078566729253, 9.764622695231052, 11.673471283143257, 12.673471283143257]
+v = [0.0, 0.29504921181947774, 0.41127105388296553, 0.4442697742642057, 0.45245156329495956, 0.4433354668341542, 0.4080138621519217, 0.0]
+3.6688154929224317 13.00680461647659 1.333691471042627</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="demo_files/figure-html/cell-9-output-6.svg" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="todo-uneven-terrain" class="level2">
+<h2 class="anchored" data-anchor-id="todo-uneven-terrain">Todo: Uneven terrain</h2>
+<ol type="1">
+<li>Plot uneven terrain profile</li>
+<li>Draw a stick figure model (see Matlab walkrw2 animation)</li>
+<li>Generate automatic superposition figure</li>
+</ol>
+</section>
+<section id="todo-short-walks" class="level2">
+<h2 class="anchored" data-anchor-id="todo-short-walks">Todo: Short walks</h2>
+<ol type="1">
+<li>Analyze ramp data (from Emily)</li>
+<li>Analyze different speed data</li>
+</ol>
+</section>
+<section id="step-to-step-transitions-and-energy-cost" class="level2">
+<h2 class="anchored" data-anchor-id="step-to-step-transitions-and-energy-cost">Step-to-step transitions and energy cost</h2>
+<ol type="1">
+<li>Metabolic power for preferred walking</li>
+<li>Inverse dynamics grid data for COM power, work</li>
+<li>Edot = v^3.42 plot</li>
+</ol>
+</section>
+<section id="todo-mechanics-story" class="level2">
+<h2 class="anchored" data-anchor-id="todo-mechanics-story">Todo: Mechanics story</h2>
+<ol type="1">
+<li>Some nice figures to show energy-time-slope tradeoff</li>
+<li>Step-to-step transition through prediction</li>
+</ol>
+</section>
+<section id="todo-photos-video-of-brachistokuo" class="level2">
+<h2 class="anchored" data-anchor-id="todo-photos-video-of-brachistokuo">Todo: Photos &amp; video of brachistokuo</h2>
+</section>
 
 </main>
 <!-- /main column -->

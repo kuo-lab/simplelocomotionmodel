@@ -85,9 +85,79 @@ The min-COT work is $(threecosts[2]).
 The const accel work is $(threecosts[3]).
 """)
 ```
+
+## Brachistokuo ramp
+Optimal slope and walk with ramp, compared with flat walking in same amount of time.
+We find six steps to be pretty good. Longer walks yield a smaller differene because there's more time spent at a steady speed. 
+Note: Currently solving for an asymmetric ramp profile, because pure symmetry constraint is slightly overconstrained for latest Ipopt.
+```{julia}
+wstar = findgait(WalkRW2l(α=0.35,safety=true), target=:speed=>0.4, varying=:P)
+N = 6
+walktime = N * onestep(wstar).tf *0.82 # meant to be a brisk walk
+walkdistance = N * onestep(wstar).steplength
+rampresult = optwalkslope(wstar, N, boundaryvels = (0., 0.), symmetric = false,
+    totaltime = walktime)
+p = multistepplot(rampresult; plotwork=true, label="ramp")
+println("ramp total cost = ", rampresult.totalcost)
+flatresult = optwalk(wstar, N, boundaryvels = (0., 0.),
+    totaltime = rampresult.totaltime, δs = zeros(6))
+println("flat total cost = ", flatresult.totalcost)
+multistepplot!(flatresult; plotwork=true, label="flat")
+# optionally, try a reversed ramp and see if it's higher cost still
+#concaveresult = optwalk(wstar, 6, boundaryvels = (0.,0.), boundarywork=true,
+#    totaltime = rampresult.totaltime, δ = -rampresult.δangles)
+#multistepplot!(concaveresult; plotwork=true)
+```
+### Brachistokuo ramp: Compute the cost for different speeds
+```{julia}
+walktimes = (0.8:0.05:1.2) * N*onestep(wstar).tf
+rampresults = Array{MultiStepResults,1}(undef, length(walktimes))
+flatresults = Array{MultiStepResults,1}(undef, length(walktimes))
+for (i,walktime) in enumerate(walktimes)
+    rampresults[i] = optwalk(wstar, N, boundaryvels = (0.,0.),
+        totaltime = walktime, δs = rampresult.δangles)
+    flatresults[i] = optwalk(wstar, N, boundaryvels = (0.,0.),
+        totaltime = walktime, δs = zeros(N))
+end
+# plot totalcost vs average speed
+plot(walkdistance ./ walktimes, [getfield.(rampresults, :totalcost), getfield.(flatresults, :totalcost)],
+    xlabel="Average speed", ylabel="Total Work", labels=["Ramp" "Flat"])
+```
+
+### Plot the ramp to scale
+```{julia}
+plot(onestep(wstar).steplength .* (0:6),cumsum(tan.([0;rampresult.δangles]).*onestep(wstar).steplength),
+    aspect_ratio=1)
+sl = onestep(wstar).steplength
+plot(sl .* [0; cumsum(cos.(rampresult.δangles))],[0; cumsum(sin.(rampresult.δangles))].*sl,
+    aspect_ratio=1)
+```
+
+## Short walks of varying slope
+To be compared with Emily's data
+```{julia}
+wstar4s = findgait(WalkRW2l(α=0.4,safety=true), target=:speed=>0.4, varying=:P)
+myslopes = 0:0.02:0.08
+p = plot(layout=(2,1))
+nsteps = 6
+startv = wstar4.vm
+for slope in myslopes
+    # walk up a slope
+    resultup = optwalktime(wstar4s, nsteps, ctime = ctime, δs=fill(slope, nsteps));
+    plotvees!(p[1],resultup, tchange=1, title="Up", rampuporder=1)
+    startv = [resultup.vm0;resultup.steps.vm]
+
+    # Walk down a slope
+    resultdown = optwalktime(wstar4s, nsteps, ctime = ctime, δs=fill(-slope, nsteps));
+    plotvees!(p[2],resultdown, tchange=1, title="Down", rampuporder=1)
+end
+Plots.display(p)
+```
+
+
 ## Todo: Uneven terrain
 1. Plot uneven terrain profile
-2. Draw a stick figure model
+2. Draw a stick figure model (see Matlab walkrw2 animation)
 3. Generate automatic superposition figure
 
 ## Todo: Short walks
