@@ -53,10 +53,10 @@ mintrimsr=optwalktriangle(wstar4n, nsteps, A = A, boundarywork=false,boundaryvel
 p = plot(layout=(1,2))
 plotvees!(p[1],nominalmsr, tchange=tchange, rampuporder=1, usespline = false, markershape=:circle,speedtype=:shortwalks)
 plotvees!(p[1],minvarmsr, tchange=tchange, rampuporder=1, usespline = false,markershape=:circle, speedtype=:shortwalks)
-plotvees!(p[1],mintrimsr, tchange=tchange, rampuporder=1, usespline = false,markershape=:circle, speedtype=:shortwalks)
-plot!(p[2],[0:nsteps+1], [1/2*nominalmsr.vm0^2; nominalmsr.steps.Pwork; NaN],markershape=:circle)
+plotvees!(p[1],mintrimsr, tchange=tchange, rampuporder=1, usespline = false,markershape=:circle, speedtype=:shortwalks, seriescolor=:auto)
+plot!(p[2],[0:nsteps+1], [1/2*nominalmsr.vm0^2; nominalmsr.steps.Pwork; NaN],markershape=:circle,seriescolor=:auto)
 plot!(p[2],[0:nsteps+1], [1/2*minvarmsr.vm0^2; minvarmsr.steps.Pwork; NaN],markershape=:circle,xticks=0:nsteps+1)
-plot!(p[2],[0:nsteps+1], [1/2*mintrimsr.vm0^2; mintrimsr.steps.Pwork; NaN],markershape=:circle,xticks=0:nsteps+1)
+plot!(p[2],[0:nsteps+1], [1/2*mintrimsr.vm0^2; mintrimsr.steps.Pwork; NaN],markershape=:circle,xticks=0:nsteps+1,seriescolor=:auto)
 plot!(p[2],xlabel="step", ylabel="push-off work", legend=false)
 energytimework = 1/2*nominalmsr.vm0^2 + sum(nominalmsr.steps.Pwork)
 mincotwork = 1/2*minvarmsr.vm0^2 + sum(minvarmsr.steps.Pwork)
@@ -85,3 +85,22 @@ The min-COT work is $(threecosts[2]).
 The const accel work is $(threecosts[3]).
 """)
 ```
+## Todo: Uneven terrain
+1. Plot uneven terrain profile
+2. Draw a stick figure model
+3. Generate automatic superposition figure
+
+## Todo: Short walks
+1. Analyze ramp data (from Emily)
+2. Analyze different speed data 
+
+## Step-to-step transitions and energy cost
+1. Metabolic power for preferred walking
+2. Inverse dynamics grid data for COM power, work
+3. Edot = v^3.42 plot
+
+## Todo: Mechanics story
+1. Some nice figures to show energy-time-slope tradeoff
+2. Step-to-step transition through prediction
+
+## Todo: Photos & video of brachistokuo
