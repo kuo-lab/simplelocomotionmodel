@@ -28,7 +28,7 @@ for (i,nsteps) in enumerate(walksteps)
 end
 Plots.display(p) # instantaneous speed vs. distance profiles
 ```
-## Compare three objectives: Energy-Time, min-COT, constant accel
+## Compare three objectives: Energy-Time, min-COT, constant acceleration
 Walk a fixed number of steps, starting and ending at rest. The
 objectives are:
 
@@ -154,8 +154,73 @@ end
 Plots.display(p)
 ```
 
+## Uneven terrain
+## Walk over a single bump with fixed and with varying step lengths
+```{julia}
+wstar4s = findgait(WalkRW2l(α=0.4,safety=true), target=:speed=>0.45, varying=:P)
+nsteps = 15
+δs = zeros(nsteps); δs[Int((nsteps+1)/2)] = 0.05 # one bump
+nominalmsr=optwalk(wstar4s, nsteps, boundarywork=false, δs=δs)
+# WalkRW2ls has varying step lengths according to preferred human
+wstar4ls = findgait(WalkRW2ls(α=0.4,safety=true), target=:speed=>0.45, varying=:P, cstep=0.35, vmstar=wstar4s.vm)
+wstar4lvs = findgait(WalkRW2lvs(α=0.4,safety=true), target=:speed=>0.45, varying=:P, c=1., vmstar=wstar4s.vm)
+varyingmsr = optwalk(wstar4ls, nsteps, boundarywork=false,δs=δs)
+varyingmsrv = optwalk(wstar4lvs, nsteps, boundarywork=false,δs=δs)
+plotvees(nominalmsr,boundaryvels=nominalmsr.boundaryvels, speedtype=:shortwalks)
+plotvees!(varyingmsr,boundaryvels=(nothing,nothing), speedtype=:shortwalks)
+plotvees!(varyingmsrv,boundaryvels=(nothing,nothing), speedtype=:shortwalks)
 
-## Todo: Uneven terrain
+plot(cumsum(nominalmsr.steps.tf), nominalmsr.steps.vm,label="normal")
+plot!(cumsum(varyingmsr.steps.tf), varyingmsr.steps.vm, label="varying" )
+
+# step timings, per step, regular and varying step lengths
+plot(cumsum(nominalmsr.steps.tf),nominalmsr.steps.tf, label="normal")
+plot!(cumsum(varyingmsr.steps.tf),varyingmsr.steps.tf, label="varying")
+```
+## Walk over a bunch of terrains
+
+```{julia}
+B = 0.05 # bump height, nondimensionalized to leg length L (nominal L = 1 m)
+# (bump height affects amplitude of velocity change, but not the shape)
+
+# A bunch of terrains
+δs = ( # terrain defined a sequence of height or angle changes from previous step
+    "U" =>    [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0] .* B, # Up
+    "D" =>    [0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0] .* B, # Down
+    "UD" =>   [0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0] .* B, # Up-Down
+    "DnUD" => [0, 0, 0, 0, 0, 0, -1, 0, 1, -1, 0, 0, 0, 0, 0] .* B, # Down & Up-Down
+    "P" =>    [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, -1, -1, -1, 0, 0, 0, 0, 0, 0] .* B, # Pyramid
+    "C1" =>   [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0] .* B, # Complex 1
+    "C2" =>   [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0] .* B, # Complex 2
+)
+p = plot(layout=(2,4), legend=false); plotnum = 1;
+for (terrainname, terrainbumps) in δs
+    results = optwalk(wstar4s, length(terrainbumps), δs=terrainbumps, boundarywork = false) # optimize push-offs (boundarywork=false means start from nominal walking)
+    plotvees!(p[plotnum], results, boundaryvels=results.boundaryvels, speedtype=:midstance, 
+        usespline=false,title=terrainname)
+    plotnum = plotnum + 1
+end
+display(p)
+```
+
+
+## Walk over a simple bump with no compensation
+
+```{julia}
+upstep = δs[1][2] # first terrain, get the terrain array
+nsteps = length(upstep)
+nocompmsr = multistep(wstar4s, Ps=fill(wstar4s.P,nsteps),δangles=upstep,boundaryvels=(wstar4s.vm,wstar4s.vm))
+nocompmsr.totalcost
+multistepplot(nocompmsr)
+```
+
+## Walk over a single bump with a reactive compensation
+```{julia}
+nbump = Int((nsteps+1)/2)
+reactmsr1 = multistep(wstar4s, Ps=fill(wstar4s.P,nbump),δangles=upstep[1:nbump],boundaryvels=(wstar4s.vm,wstar4s.vm))
+reactmsr2 = optwalk(wstar4s, nsteps-nbump, totaltime = nominalmsr.totaltime - reactmsr1.totaltime - 2,boundaryvels=(reactmsr1.steps[end].vm,wstar4s.vm), boundarywork=(false,false))
+multistepplot(reactmsr2)
+```
 1. Plot uneven terrain profile
 2. Draw a stick figure model (see Matlab walkrw2 animation)
 3. Generate automatic superposition figure
