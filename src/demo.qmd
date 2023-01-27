@@ -13,7 +13,7 @@ The cost function is total work, plus a linear cost of time with coefficient cti
 ```{julia}
 #| fig-cap: "Short walks of varying distance"
 #| fig-cap: "Speed vs time for short walks; each trace is a different bout distance"
-using DynLoco, Plots; plotlyjs()
+using DynLoco, Plots; #plotlyjs()
 
 wstar4 = findgait(WalkRW2l(α=0.35,safety=true), target=:speed=>0.3, varying=:P)
 ctime = 0.015 # cost of time, to encourage hurrying
