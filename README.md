@@ -4,19 +4,24 @@ Simple Locomotion Model
 <img src="img/simplelocomotionmodel.svg" width="50%" /><br> Notebooks
 and code for optimization of a pendulum-like model of locomotion.
 Dynamical model performs walking tasks specified by optimal control.
-Human experiments to test model are described in publications.  
-\## Optimization of energy and time predict dynamic walking speeds
+Human experiments to test model are described in publications.
+
+## Optimization of energy and time predict dynamic walking speeds
+
 ![short walks](img/shortwalks.svg)
 
 ## Humans plan for the near future to negotiate uneven terrain
 
-![walking on uneven terrain](img/uneventerrainwalking.svg) \### About
-the model The “simplest walking model” (Kuo, 2002) models the legs as
-simple pendulums. There is a point mass for the body, and infinitesimal
-point masses for the feet. For the present publications, walking speed
-varies by relatively small amounts, for which modulation of the swing
-leg is treated as having low cost. For increasing speeds and step
-frequencies, the swing leg cost increases sharply (Kuo, 2001).
+![walking on uneven terrain](img/uneventerrainwalking.svg)
+
+## About the model
+
+The “simplest walking model” (Kuo, 2002) models the legs as simple
+pendulums. There is a point mass for the body, and infinitesimal point
+masses for the feet. For the present publications, walking speed varies
+by relatively small amounts, for which modulation of the swing leg is
+treated as having low cost. For increasing speeds and step frequencies,
+the swing leg cost increases sharply (Kuo, 2001).
 
 The optimization is performed withj the [Julia
 language](https://julialang.org), a fully open-source language. It uses
@@ -30,7 +35,7 @@ Users are invited to view the notebooks and source code in this
 repository. Motivated individuals may also wish to execute and modify
 the code themselves, which necessitates installation of Julia.
 
-### Installation
+## Code installation
 
 - Install Julia according to the [Getting Started
   guide](https://docs.julialang.org/en/v1/manual/getting-started/)
