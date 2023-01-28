@@ -1,14 +1,16 @@
 ---
-title: "Dynamic optimization of human walking speeds"
+title: "Simple Locomotion Models"
 format: 
-     html:
-          code-fold: true
+     gfm
 jupyter: julia-1.8
 ---
-## Optimization of energy and time predicts dynamic speeds for human walking
+# Simple model of pendulum-like walking
+![walking figure and pendulum model]../img/walkingimage.svg)
+
+## Perform short walks of a range of distances
 Take walks of varying distances, and show how the optimal trajectory has an inverted-U 
 velocity profile, with peak speed that increases with distance up to about 12 steps.
-The cost function is net mechanical work, plus a linear cost of time with coefficient ctime.
+The cost function is total work, plus a linear cost of time with coefficient ctime.
 
 ```{julia}
 #| fig-cap: "Short walks of varying distance"
