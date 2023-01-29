@@ -4,8 +4,9 @@ format:
     html:
         code-fold: true
 jupyter: julia-1.8
+bibliography: simplelocomotionmodel.bib
 ---
-## Optimization of energy and time predicts dynamic speeds for human walking
+## Optimization of energy and time predicts dynamic speeds for human walking [@carlisle2022OptimizationEnergyTime]
 Take walks of varying distances, and show how the optimal trajectory has an inverted-U 
 velocity profile, with peak speed that increases with distance up to about 12 steps.
 The cost function is net mechanical work, plus a linear cost of time with coefficient ctime.
@@ -81,4 +82,8 @@ The const accel work is $(threecosts[3]).
 ```
 
 # Jupyter notebook
-This code is also available in a [Jupyter notebook](shortwalks.ipynb) and [plain Julia](shortwalks.jl) text file.
+This code is available in a [Jupyter notebook](shortwalks.ipynb) and [plain Julia](shortwalks.jl) text file.
+
+## References
+::: {#refs}
+:::

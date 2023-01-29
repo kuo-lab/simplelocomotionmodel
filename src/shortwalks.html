@@ -83,6 +83,25 @@ code span.st { color: #4070a0; } /* String */
 code span.va { color: #19177c; } /* Variable */
 code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
 </style>
 
 
@@ -122,8 +141,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 </header>
 
-<section id="optimization-of-energy-and-time-predicts-dynamic-speeds-for-human-walking" class="level2">
-<h2 class="anchored" data-anchor-id="optimization-of-energy-and-time-predicts-dynamic-speeds-for-human-walking">Optimization of energy and time predicts dynamic speeds for human walking</h2>
+<section id="optimization-of-energy-and-time-predicts-dynamic-speeds-for-human-walking-carlisle2022optimizationenergytime" class="level2">
+<h2 class="anchored" data-anchor-id="optimization-of-energy-and-time-predicts-dynamic-speeds-for-human-walking-carlisle2022optimizationenergytime">Optimization of energy and time predicts dynamic speeds for human walking <span class="citation" data-cites="carlisle2022OptimizationEnergyTime">(<a href="#ref-carlisle2022OptimizationEnergyTime" role="doc-biblioref">Carlisle and Kuo 2022</a>)</span></h2>
 <p>Take walks of varying distances, and show how the optimal trajectory has an inverted-U velocity profile, with peak speed that increases with distance up to about 12 steps. The cost function is net mechanical work, plus a linear cost of time with coefficient ctime.</p>
 <div class="cell" data-execution_count="1">
 <details>
@@ -202,7 +221,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>threecosts <span class="op">=</span> [<span class="fl">1</span><span class="op">/</span><span class="fl">2</span><span class="op">*</span>nominalmsr.vm0<span class="op">^</span><span class="fl">2</span> <span class="op">+</span> <span class="fu">sum</span>(nominalmsr.steps.Pwork), <span class="fl">1</span><span class="op">/</span><span class="fl">2</span><span class="op">*</span>minvarmsr.vm0<span class="op">^</span><span class="fl">2</span> <span class="op">+</span> <span class="fu">sum</span>(minvarmsr.steps.Pwork), <span class="fl">1</span><span class="op">/</span><span class="fl">2</span><span class="op">*</span>mintrimsr.vm0<span class="op">^</span><span class="fl">2</span> <span class="op">+</span> <span class="fu">sum</span>(mintrimsr.steps.Pwork)]</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">bar</span>(threecosts,xticks<span class="op">=</span>((<span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span>),(<span class="st">"Energy-Time"</span>, <span class="st">"Steady min-COT"</span>, <span class="st">"Steady accel"</span>)),legend<span class="op">=</span><span class="cn">false</span>,ylabel<span class="op">=</span><span class="st">"Total work"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="4">
+<div class="cell-output cell-output-display" data-execution_count="16">
 <p><img src="shortwalks_files/figure-html/cell-4-output-1.svg" class="img-fluid"></p>
 </div>
 </div>
@@ -216,17 +235,25 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="st">The const accel work is </span><span class="sc">$</span>(threecosts[<span class="fl">3</span>])<span class="st">.</span></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="5">
+<div class="cell-output cell-output-display" data-execution_count="17">
 <p>The energy-time work is 0.21077394712113307. The min-COT work is 0.23455721768541665. The const accel work is 0.27531432646148135.</p>
 </div>
 </div>
 </section>
 <section id="jupyter-notebook" class="level1">
 <h1>Jupyter notebook</h1>
-<p>This code is also available in a <a href="shortwalks.ipynb">Jupyter notebook</a> and <a href="shortwalks.jl">plain Julia</a> text file.</p>
+<p>This code is available in a <a href="shortwalks.ipynb">Jupyter notebook</a> and <a href="shortwalks.jl">plain Julia</a> text file.</p>
+<section id="references" class="level2">
+
+
+</section>
 </section>
 
-</main>
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography">
+<div id="ref-carlisle2022OptimizationEnergyTime" class="csl-entry" role="doc-biblioentry">
+Carlisle, R. Elizabeth, and Arthur D. Kuo. 2022. <span>“Optimization of Energy and Time Predicts Dynamic Speeds for Human Walking.”</span> <span>bioRxiv</span>. <a href="https://doi.org/10.1101/2022.07.15.500158">https://doi.org/10.1101/2022.07.15.500158</a>.
+</div>
+</div></section></div></main>
 <!-- /main column -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {

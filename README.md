@@ -6,22 +6,30 @@ and code for optimization of a pendulum-like model of locomotion.
 Dynamical model performs walking tasks specified by optimal control.
 Human experiments to test model are described in publications.
 
-## Optimization of energy and time predict dynamic walking speeds
+## Optimization of energy and time predicts dynamic speeds for human walking (Carlisle and Kuo 2022)
 
 ![short walks](img/shortwalks.svg)
 
-## Humans plan for the near future to negotiate uneven terrain
+## Humans plan for the near future to walk economically on uneven terrain (Darici and Kuo 2022)
 
-![walking on uneven terrain](img/uneventerrainwalking.svg)
+![walking on uneven terrain](img/uneventerrainwalking.svg) This
+[notebook](src/shortwalks.ipynb) demonstrates a dynamic optimization for
+walking on uneven terrain. The model plans ahead for upcoming steps, and
+determines a trajectory of push-offs and forward walking speed that
+minimizes the energy and time expended for the terrain. Energy is the
+push-off work performed by the model, and time is the total duration of
+the walk, scaled by a time valuation constant $c_t$.
 
-## About the model
+[HTML](shortwalks.html)
 
-The “simplest walking model” (Kuo, 2002) models the legs as simple
+### About the model
+
+The “simplest walking model” (Kuo 2002) models the legs as simple
 pendulums. There is a point mass for the body, and infinitesimal point
 masses for the feet. For the present publications, walking speed varies
 by relatively small amounts, for which modulation of the swing leg is
 treated as having low cost. For increasing speeds and step frequencies,
-the swing leg cost increases sharply (Kuo, 2001).
+the model’s swing leg cost increases sharply (Kuo 2001).
 
 The optimization is performed withj the [Julia
 language](https://julialang.org), a fully open-source language. It uses
@@ -35,7 +43,7 @@ Users are invited to view the notebooks and source code in this
 repository. Motivated individuals may also wish to execute and modify
 the code themselves, which necessitates installation of Julia.
 
-## Code installation
+### Installation
 
 - Install Julia according to the [Getting Started
   guide](https://docs.julialang.org/en/v1/manual/getting-started/)
@@ -61,8 +69,52 @@ The model equations are implemented in the
 [DynLoco](https://github.com/kuo-lab/DynLoco) package with Julia. This
 package is automatically installed with the present repository’s
 environment (see `instantiate` above). All other dependencies are within
-the Julia packages and managed with the environment. No additional
-management steps are necessary. \### References \### Issues and pull
-requests Please file an
+the Julia packages and managed with the environment, so that no
+additional management is necessary. Jupyter notebooks are generated with
+[Quarto](https://quarto.org), with source provided in `.qmd` files.
+Quarto is not necessary to open and interact with Jupyter notebooks.
+
+### References
+
+<div id="refs" class="references csl-bib-body hanging-indent">
+
+<div id="ref-carlisle2022OptimizationEnergyTime" class="csl-entry">
+
+Carlisle, R. Elizabeth, and Arthur D. Kuo. 2022. “Optimization of Energy
+and Time Predicts Dynamic Speeds for Human Walking.” bioRxiv.
+<https://doi.org/10.1101/2022.07.15.500158>.
+
+</div>
+
+<div id="ref-darici2022HumansPlanFuture" class="csl-entry">
+
+Darici, Osman, and Arthur D. Kuo. 2022. “Humans Plan for the Near Future
+to Walk Economically on Uneven Terrain.” *arXiv* 2207.11224 (July).
+<https://doi.org/10.48550/arXiv.2207.11224>.
+
+</div>
+
+<div id="ref-kuo2001SimpleModelBipedala" class="csl-entry">
+
+Kuo, Arthur D. 2001. “[A Simple Model of Bipedal Walking Predicts the
+Preferred Speed-Step Length
+Relationship](https://www.ncbi.nlm.nih.gov/pubmed/11476370).” *Journal
+of Biomechanical Engineering* 123 (3): 264–69.
+
+</div>
+
+<div id="ref-kuo2002EnergeticsActivelyPowereda" class="csl-entry">
+
+———. 2002. “[Energetics of Actively Powered Locomotion Using the
+Simplest Walking Model](https://www.ncbi.nlm.nih.gov/pubmed/11871597).”
+*Journal of Biomechanical Engineering* 124 (1): 113–20.
+
+</div>
+
+</div>
+
+### Issues and pull requests
+
+Please file an
 [issue](https://github.com/kuo-lab/simplelocomotionmodel/issues) for
 bugs or problems. Pull requests are welcomed.
