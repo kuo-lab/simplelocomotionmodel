@@ -14,12 +14,12 @@ Notebooks and code for optimization of a pendulum-like model of locomotion. Dyna
 ![walking on uneven terrain](img/uneventerrainwalking.svg)
 This [notebook](src/shortwalks.ipynb) demonstrates a dynamic optimization for walking on uneven terrain. The model plans ahead for upcoming steps, and determines a trajectory of push-offs and forward walking speed that minimizes the energy and time expended for the terrain. Energy is the push-off work performed by the model, and time is the total duration of the walk, scaled by a time valuation constant $c_t$.  
 
-[HTML](shortwalks.html) 
+[HTML](src/shortwalks.html) 
 
 ### About the model
 The "simplest walking model" [@kuo2002EnergeticsActivelyPowereda] models the legs as simple pendulums. There is a point mass for the body, and infinitesimal point masses for the feet. For the present publications, walking speed varies by relatively small amounts, for which modulation of the swing leg is treated as having low cost. For increasing speeds and step frequencies, the model's swing leg cost increases sharply [@kuo2001SimpleModelBipedala]. 
 
-The optimization is performed withj the [Julia language](https://julialang.org), a fully open-source language. It uses open-source packages for optimization ([JuMP](https://jump.dev/), the model dynamics [DynLoco](https://github.com/kuo-lab/DynLoco). The emphasis here is on simplicity and code readability. The Julia code provides a minimal demonstration of the mechanics and optimization approach. The entire tool chain is open source.
+The optimization is performed withj the [Julia language](https://julialang.org), a fully open-source language. It uses open-source packages for optimization ([JuMP](https://jump.dev/) and for model dynamics [DynLoco](https://github.com/kuo-lab/DynLoco)). The emphasis here is on simplicity and code readability. The Julia code provides a minimal demonstration of the mechanics and optimization approach. The entire tool chain is open source.
 
 Users are invited to view the notebooks and source code in this repository. Motivated individuals may also wish to execute and modify the code themselves, which necessitates installation of Julia.
 

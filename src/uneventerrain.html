@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.251">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Dynamic optimization of walking on uneven terrain</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+
+<script src="uneventerrain_files/libs/clipboard/clipboard.min.js"></script>
+<script src="uneventerrain_files/libs/quarto-html/quarto.js"></script>
+<script src="uneventerrain_files/libs/quarto-html/popper.min.js"></script>
+<script src="uneventerrain_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="uneventerrain_files/libs/quarto-html/anchor.min.js"></script>
+<link href="uneventerrain_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="uneventerrain_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="uneventerrain_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="uneventerrain_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="uneventerrain_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Dynamic optimization of walking on uneven terrain</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<p>A simple walking model is optimized to walk over uneven terrain. The objective is to minimize energy expenditure, quantified by the push-off work performed with each step. The optimization here seeks to traverse a stretch of terrain in the same amount of time as level walking.</p>
+<section id="walk-over-a-single-upward-step" class="level2">
+<h2 class="anchored" data-anchor-id="walk-over-a-single-upward-step">Walk over a single upward step</h2>
+<p>The optimal compensation for a single upward step is to speed up beforehand, lose speed stepping upward, and then speed up again afterward. The optimal speed-ups both occur over several steps but have different shapes: the first one increases nearly exponentially with time, and the second one resembles a saturating exponential. The optimization is described by Darici et al. <span class="citation" data-cites="darici2020AnticipatoryControlMomentum">(<a href="#ref-darici2020AnticipatoryControlMomentum" role="doc-biblioref">2020</a>)</span>, and tested with human subjects experiment <span class="citation" data-cites="darici2022HumansOptimallyAnticipate">(<a href="#ref-darici2022HumansOptimallyAnticipate" role="doc-biblioref">Darici and Kuo 2022</a>)</span>.</p>
+<div class="cell" data-execution_count="1">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">DynLoco</span>, <span class="bu">Plots; </span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>wstar4s <span class="op">=</span> <span class="fu">findgait</span>(<span class="fu">WalkRW2l</span>(α<span class="op">=</span><span class="fl">0.4</span>,safety<span class="op">=</span><span class="cn">true</span>), target<span class="op">=:</span>speed<span class="op">=&gt;</span><span class="fl">0.45</span>, varying<span class="op">=:</span>P)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>nsteps <span class="op">=</span> <span class="fl">15</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>δs <span class="op">=</span> <span class="fu">zeros</span>(nsteps); δs[<span class="fu">Int</span>((nsteps<span class="op">+</span><span class="fl">1</span>)<span class="op">/</span><span class="fl">2</span>)] <span class="op">=</span> <span class="fl">0.05</span> <span class="co"># one bump</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>nominalresults <span class="op">=</span> <span class="fu">optwalk</span>(wstar4s, nsteps, boundarywork<span class="op">=</span><span class="cn">false</span>, δs<span class="op">=</span>δs)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> <span class="fu">multistepplot</span>(nominalresults) <span class="co"># plot speed, push-off, terrain heights</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">display</span>(p)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> <span class="fu">plot</span>(<span class="fu">cumsum</span>(nominalresults.steps.tf), nominalresults.steps.vm,label<span class="op">=</span><span class="st">"normal"</span>,xlabel<span class="op">=</span><span class="st">"time"</span>,ylabel<span class="op">=</span><span class="st">"midstance speed"</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">display</span>(p)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># step timings, per step</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">cumsum</span>(nominalresults.steps.tf),nominalresults.steps.tf, label<span class="op">=</span><span class="st">"normal"</span>,xlabel<span class="op">=</span><span class="st">"time"</span>,ylabel<span class="op">=</span><span class="st">"step time"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<p><img src="uneventerrain_files/figure-html/cell-2-output-1.svg" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="uneventerrain_files/figure-html/cell-2-output-2.svg" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<p><img src="uneventerrain_files/figure-html/cell-2-output-3.svg" class="img-fluid"></p>
+</div>
+</div>
+<p>The optimization is performed with <code>optwalk</code>, which computes the minimum-work trajectory for <code>nsteps</code> of walking. A terrain may be provided by an array of height/angle changes <code>δs</code>.</p>
+<p>All quantities are plotted in dimensionless form, with base units of body mass <span class="math inline">\(M\)</span>, leg length <span class="math inline">\(L\)</span>, and gravitational acceleration <span class="math inline">\(g\)</span>. Thus speed is normalized by <span class="math inline">\(\sqrt(gL)\)</span> and time by <span class="math inline">\(\sqrt(L/g)\)</span>. For a typical leg length of <span class="math inline">\(L = 1 \mathrm{m}\)</span>, the dimensional speed is about 1.25 m/s, and step time about 0.55 s.</p>
+</section>
+<section id="use-varying-step-lengths-to-walk-over-a-single-upward-step" class="level2">
+<h2 class="anchored" data-anchor-id="use-varying-step-lengths-to-walk-over-a-single-upward-step">Use varying step lengths to walk over a single upward step</h2>
+<div class="cell" data-execution_count="2">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>δs <span class="op">=</span> <span class="fu">zeros</span>(nsteps); δs[<span class="fu">Int</span>((nsteps<span class="op">+</span><span class="fl">1</span>)<span class="op">/</span><span class="fl">2</span>)] <span class="op">=</span> <span class="fl">0.05</span> <span class="co"># one bump</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>nominalmsr<span class="op">=</span><span class="fu">optwalk</span>(wstar4s, nsteps, boundarywork<span class="op">=</span><span class="cn">false</span>, δs<span class="op">=</span>δs)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># WalkRW2ls has varying step lengths according to preferred human</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>wstar4ls <span class="op">=</span> <span class="fu">findgait</span>(<span class="fu">WalkRW2ls</span>(α<span class="op">=</span><span class="fl">0.4</span>,safety<span class="op">=</span><span class="cn">true</span>), target<span class="op">=:</span>speed<span class="op">=&gt;</span><span class="fl">0.45</span>, varying<span class="op">=:</span>P, cstep<span class="op">=</span><span class="fl">0.35</span>, vmstar<span class="op">=</span>wstar4s.vm)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>wstar4lvs <span class="op">=</span> <span class="fu">findgait</span>(<span class="fu">WalkRW2lvs</span>(α<span class="op">=</span><span class="fl">0.4</span>,safety<span class="op">=</span><span class="cn">true</span>), target<span class="op">=:</span>speed<span class="op">=&gt;</span><span class="fl">0.45</span>, varying<span class="op">=:</span>P, c<span class="op">=</span><span class="fl">1</span>., vmstar<span class="op">=</span>wstar4s.vm)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>varyingmsr <span class="op">=</span> <span class="fu">optwalk</span>(wstar4ls, nsteps, boundarywork<span class="op">=</span><span class="cn">false</span>,δs<span class="op">=</span>δs)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>varyingmsrv <span class="op">=</span> <span class="fu">optwalk</span>(wstar4lvs, nsteps, boundarywork<span class="op">=</span><span class="cn">false</span>,δs<span class="op">=</span>δs)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">plotvees</span>(nominalmsr,boundaryvels<span class="op">=</span>nominalmsr.boundaryvels, speedtype<span class="op">=:</span>shortwalks)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">plotvees!</span>(varyingmsr,boundaryvels<span class="op">=</span>(<span class="cn">nothing</span>,<span class="cn">nothing</span>), speedtype<span class="op">=:</span>shortwalks)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">plotvees!</span>(varyingmsrv,boundaryvels<span class="op">=</span>(<span class="cn">nothing</span>,<span class="cn">nothing</span>), speedtype<span class="op">=:</span>shortwalks)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">cumsum</span>(nominalmsr.steps.tf), nominalmsr.steps.vm,label<span class="op">=</span><span class="st">"normal"</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="fu">plot!</span>(<span class="fu">cumsum</span>(varyingmsr.steps.tf), varyingmsr.steps.vm, label<span class="op">=</span><span class="st">"varying"</span> )</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co"># step timings, per step, regular and varying step lengths</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">cumsum</span>(nominalmsr.steps.tf),nominalmsr.steps.tf, label<span class="op">=</span><span class="st">"normal"</span>)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="fu">plot!</span>(<span class="fu">cumsum</span>(varyingmsr.steps.tf),varyingmsr.steps.tf, label<span class="op">=</span><span class="st">"varying"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<p><img src="uneventerrain_files/figure-html/cell-3-output-1.svg" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="walk-over-a-bunch-of-terrains" class="level2">
+<h2 class="anchored" data-anchor-id="walk-over-a-bunch-of-terrains">Walk over a bunch of terrains</h2>
+<div class="cell" data-execution_count="3">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> <span class="fl">0.05</span> <span class="co"># bump height, nondimensionalized to leg length L (nominal L = 1 m)</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># (bump height affects amplitude of velocity change, but not the shape)</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># A bunch of terrains</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>δs <span class="op">=</span> ( <span class="co"># terrain defined a sequence of height or angle changes from previous step</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"U"</span> <span class="op">=&gt;</span>    [<span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>] <span class="op">.*</span> B, <span class="co"># Up</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"D"</span> <span class="op">=&gt;</span>    [<span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="op">-</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>] <span class="op">.*</span> B, <span class="co"># Down</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"UD"</span> <span class="op">=&gt;</span>   [<span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="op">-</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>] <span class="op">.*</span> B, <span class="co"># Up-Down</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"DnUD"</span> <span class="op">=&gt;</span> [<span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="op">-</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="op">-</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>] <span class="op">.*</span> B, <span class="co"># Down &amp; Up-Down</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"P"</span> <span class="op">=&gt;</span>    [<span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="op">-</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>] <span class="op">.*</span> B, <span class="co"># Pyramid</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"C1"</span> <span class="op">=&gt;</span>   [<span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="op">-</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>] <span class="op">.*</span> B, <span class="co"># Complex 1</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"C2"</span> <span class="op">=&gt;</span>   [<span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>] <span class="op">.*</span> B, <span class="co"># Complex 2</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> <span class="fu">plot</span>(layout<span class="op">=</span>(<span class="fl">2</span>,<span class="fl">4</span>), legend<span class="op">=</span><span class="cn">false</span>); plotnum <span class="op">=</span> <span class="fl">1</span>;</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (terrainname, terrainbumps) <span class="kw">in</span> δs</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    results <span class="op">=</span> <span class="fu">optwalk</span>(wstar4s, <span class="fu">length</span>(terrainbumps), δs<span class="op">=</span>terrainbumps, boundarywork <span class="op">=</span> <span class="cn">false</span>) <span class="co"># optimize push-offs (boundarywork=false means start from nominal walking)</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plotvees!</span>(p[plotnum], results, boundaryvels<span class="op">=</span>results.boundaryvels, speedtype<span class="op">=:</span>midstance, </span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>        usespline<span class="op">=</span><span class="cn">false</span>,title<span class="op">=</span>terrainname)</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    plotnum <span class="op">=</span> plotnum <span class="op">+</span> <span class="fl">1</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="fu">display</span>(p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<p><img src="uneventerrain_files/figure-html/cell-4-output-1.svg" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="walk-over-a-simple-bump-with-no-compensation" class="level2">
+<h2 class="anchored" data-anchor-id="walk-over-a-simple-bump-with-no-compensation">Walk over a simple bump with no compensation</h2>
+<div class="cell" data-execution_count="4">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>upstep <span class="op">=</span> δs[<span class="fl">1</span>][<span class="fl">2</span>] <span class="co"># first terrain, get the terrain array</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>nsteps <span class="op">=</span> <span class="fu">length</span>(upstep)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>nocompmsr <span class="op">=</span> <span class="fu">multistep</span>(wstar4s, Ps<span class="op">=</span><span class="fu">fill</span>(wstar4s.P,nsteps),δangles<span class="op">=</span>upstep,boundaryvels<span class="op">=</span>(wstar4s.vm,wstar4s.vm))</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>nocompmsr.totalcost</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">multistepplot</span>(nocompmsr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<p><img src="uneventerrain_files/figure-html/cell-5-output-1.svg" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="walk-over-a-single-bump-with-a-reactive-compensation" class="level2">
+<h2 class="anchored" data-anchor-id="walk-over-a-single-bump-with-a-reactive-compensation">Walk over a single bump with a reactive compensation</h2>
+<div class="cell" data-execution_count="5">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>nbump <span class="op">=</span> <span class="fu">Int</span>((nsteps<span class="op">+</span><span class="fl">1</span>)<span class="op">/</span><span class="fl">2</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>reactmsr1 <span class="op">=</span> <span class="fu">multistep</span>(wstar4s, Ps<span class="op">=</span><span class="fu">fill</span>(wstar4s.P,nbump),δangles<span class="op">=</span>upstep[<span class="fl">1</span><span class="op">:</span>nbump],boundaryvels<span class="op">=</span>(wstar4s.vm,wstar4s.vm))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>reactmsr2 <span class="op">=</span> <span class="fu">optwalk</span>(wstar4s, nsteps<span class="op">-</span>nbump, totaltime <span class="op">=</span> nominalmsr.totaltime <span class="op">-</span> reactmsr1.totaltime <span class="op">-</span> <span class="fl">2</span>,boundaryvels<span class="op">=</span>(reactmsr1.steps[<span class="kw">end</span>].vm,wstar4s.vm), boundarywork<span class="op">=</span>(<span class="cn">false</span>,<span class="cn">false</span>))</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">multistepplot</span>(reactmsr2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<p><img src="uneventerrain_files/figure-html/cell-6-output-1.svg" class="img-fluid"></p>
+</div>
+</div>
+<ol type="1">
+<li>Plot uneven terrain profile</li>
+<li>Draw a stick figure model (see Matlab walkrw2 animation)</li>
+<li>Generate automatic superposition figure</li>
+</ol>
+</section>
+<section id="todo-short-walks" class="level2">
+<h2 class="anchored" data-anchor-id="todo-short-walks">Todo: Short walks</h2>
+<ol type="1">
+<li>Analyze ramp data (from Emily)</li>
+<li>Analyze different speed data</li>
+</ol>
+</section>
+<section id="step-to-step-transitions-and-energy-cost" class="level2">
+<h2 class="anchored" data-anchor-id="step-to-step-transitions-and-energy-cost">Step-to-step transitions and energy cost</h2>
+<ol type="1">
+<li>Metabolic power for preferred walking</li>
+<li>Inverse dynamics grid data for COM power, work</li>
+<li>Edot = v^3.42 plot</li>
+</ol>
+</section>
+<section id="todo-mechanics-story" class="level2">
+<h2 class="anchored" data-anchor-id="todo-mechanics-story">Todo: Mechanics story</h2>
+<ol type="1">
+<li>Some nice figures to show energy-time-slope tradeoff</li>
+<li>Step-to-step transition through prediction</li>
+</ol>
+</section>
+<section id="todo-photos-video-of-brachistokuo" class="level2 unnumbered">
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">Todo: Photos &amp; video of brachistokuo</h2><div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography">
+<div id="ref-darici2022HumansOptimallyAnticipate" class="csl-entry" role="doc-biblioentry">
+Darici, Osman, and Arthur D. Kuo. 2022. <span>“Humans Optimally Anticipate and Compensate for an Uneven Step During Walking.”</span> Edited by Lena H Ting. <em>eLife</em> 11 (January): e65402. <a href="https://doi.org/10.7554/eLife.65402">https://doi.org/10.7554/eLife.65402</a>.
+</div>
+<div id="ref-darici2020AnticipatoryControlMomentum" class="csl-entry" role="doc-biblioentry">
+Darici, Osman, Hakan Temeltas, and Arthur D. Kuo. 2020. <span>“Anticipatory Control of Momentum for Bipedal Walking on Uneven Terrain.”</span> <em>Scientific Reports</em> 10 (1): 540. <a href="https://doi.org/10.1038/s41598-019-57156-6">https://doi.org/10.1038/s41598-019-57156-6</a>.
+</div>
+</div></section></div></main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

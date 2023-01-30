@@ -20,7 +20,7 @@ minimizes the energy and time expended for the terrain. Energy is the
 push-off work performed by the model, and time is the total duration of
 the walk, scaled by a time valuation constant $c_t$.
 
-[HTML](shortwalks.html)
+[HTML](src/shortwalks.html)
 
 ### About the model
 

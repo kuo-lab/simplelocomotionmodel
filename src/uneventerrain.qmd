@@ -1,0 +1,119 @@
+---
+title: "Dynamic optimization of walking on uneven terrain"
+format: 
+     html:
+          code-fold: true
+jupyter: julia-1.8
+bibliography: simplelocomotionmodel.bib
+---
+A simple walking model is optimized to walk over uneven terrain. The objective is to minimize energy expenditure, quantified by the push-off work performed with each step. The optimization here seeks to traverse a stretch of terrain in the same amount of time as level walking. 
+
+## Walk over a single upward step 
+The optimal compensation for a single upward step is to speed up beforehand, lose speed stepping upward, and then speed up again afterward. The optimal speed-ups both occur over several steps but have different shapes: the first one increases nearly exponentially with time, and the second one resembles a saturating exponential. The optimization is described by Darici et al. [-@darici2020AnticipatoryControlMomentum], and tested with human subjects experiment [@darici2022HumansOptimallyAnticipate].
+
+```{julia}
+using DynLoco, Plots; 
+
+wstar4s = findgait(WalkRW2l(α=0.4,safety=true), target=:speed=>0.45, varying=:P)
+nsteps = 15
+δs = zeros(nsteps); δs[Int((nsteps+1)/2)] = 0.05 # one bump
+nominalresults = optwalk(wstar4s, nsteps, boundarywork=false, δs=δs)
+
+p = multistepplot(nominalresults) # plot speed, push-off, terrain heights
+display(p)
+
+p = plot(cumsum(nominalresults.steps.tf), nominalresults.steps.vm,xlabel="time",ylabel="midstance speed")
+display(p)
+
+# step timings, per step
+plot(cumsum(nominalresults.steps.tf),nominalresults.steps.tf, xlabel="time",ylabel="step time")
+```
+The optimization is performed with `optwalk`, which computes the minimum-work trajectory for `nsteps` of walking. A terrain may be provided by an array of height/angle changes `δs`.
+
+All quantities are plotted in dimensionless form, with base units of body mass $M$, leg length $L$, and gravitational acceleration $g$. Thus speed is normalized by $\sqrt(gL)$ and time by $\sqrt(L/g)$. For a typical leg length of $L = 1 \mathrm{m}$, the dimensional speed is about 1.25 m/s, and step time about 0.55 s.  
+
+## Use varying step lengths to walk over a single upward step 
+```{julia}
+δs = zeros(nsteps); δs[Int((nsteps+1)/2)] = 0.05 # one bump
+nominalmsr=optwalk(wstar4s, nsteps, boundarywork=false, δs=δs)
+# WalkRW2ls has varying step lengths according to preferred human
+wstar4ls = findgait(WalkRW2ls(α=0.4,safety=true), target=:speed=>0.45, varying=:P, cstep=0.35, vmstar=wstar4s.vm)
+wstar4lvs = findgait(WalkRW2lvs(α=0.4,safety=true), target=:speed=>0.45, varying=:P, c=1., vmstar=wstar4s.vm)
+varyingmsr = optwalk(wstar4ls, nsteps, boundarywork=false,δs=δs)
+varyingmsrv = optwalk(wstar4lvs, nsteps, boundarywork=false,δs=δs)
+plotvees(nominalmsr,boundaryvels=nominalmsr.boundaryvels, speedtype=:shortwalks)
+plotvees!(varyingmsr,boundaryvels=(nothing,nothing), speedtype=:shortwalks)
+plotvees!(varyingmsrv,boundaryvels=(nothing,nothing), speedtype=:shortwalks)
+
+plot(cumsum(nominalmsr.steps.tf), nominalmsr.steps.vm,label="normal")
+plot!(cumsum(varyingmsr.steps.tf), varyingmsr.steps.vm, label="varying" )
+
+# step timings, per step, regular and varying step lengths
+plot(cumsum(nominalmsr.steps.tf),nominalmsr.steps.tf, label="normal")
+plot!(cumsum(varyingmsr.steps.tf),varyingmsr.steps.tf, label="varying")
+```
+
+
+
+## Walk over a bunch of terrains
+
+```{julia}
+B = 0.05 # bump height, nondimensionalized to leg length L (nominal L = 1 m)
+# (bump height affects amplitude of velocity change, but not the shape)
+
+# A bunch of terrains
+δs = ( # terrain defined a sequence of height or angle changes from previous step
+    "U" =>    [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0] .* B, # Up
+    "D" =>    [0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0] .* B, # Down
+    "UD" =>   [0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0] .* B, # Up-Down
+    "DnUD" => [0, 0, 0, 0, 0, 0, -1, 0, 1, -1, 0, 0, 0, 0, 0] .* B, # Down & Up-Down
+    "P" =>    [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, -1, -1, -1, 0, 0, 0, 0, 0, 0] .* B, # Pyramid
+    "C1" =>   [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0] .* B, # Complex 1
+    "C2" =>   [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0] .* B, # Complex 2
+)
+p = plot(layout=(2,4), legend=false); plotnum = 1;
+for (terrainname, terrainbumps) in δs
+    results = optwalk(wstar4s, length(terrainbumps), δs=terrainbumps, boundarywork = false) # optimize push-offs (boundarywork=false means start from nominal walking)
+    plotvees!(p[plotnum], results, boundaryvels=results.boundaryvels, speedtype=:midstance, 
+        usespline=false,title=terrainname)
+    plotnum = plotnum + 1
+end
+display(p)
+```
+
+
+## Walk over a simple bump with no compensation
+
+```{julia}
+upstep = δs[1][2] # first terrain, get the terrain array
+nsteps = length(upstep)
+nocompmsr = multistep(wstar4s, Ps=fill(wstar4s.P,nsteps),δangles=upstep,boundaryvels=(wstar4s.vm,wstar4s.vm))
+nocompmsr.totalcost
+multistepplot(nocompmsr)
+```
+
+## Walk over a single bump with a reactive compensation
+```{julia}
+nbump = Int((nsteps+1)/2)
+reactmsr1 = multistep(wstar4s, Ps=fill(wstar4s.P,nbump),δangles=upstep[1:nbump],boundaryvels=(wstar4s.vm,wstar4s.vm))
+reactmsr2 = optwalk(wstar4s, nsteps-nbump, totaltime = nominalmsr.totaltime - reactmsr1.totaltime - 2,boundaryvels=(reactmsr1.steps[end].vm,wstar4s.vm), boundarywork=(false,false))
+multistepplot(reactmsr2)
+```
+1. Plot uneven terrain profile
+2. Draw a stick figure model (see Matlab walkrw2 animation)
+3. Generate automatic superposition figure
+
+## Todo: Short walks
+1. Analyze ramp data (from Emily)
+2. Analyze different speed data 
+
+## Step-to-step transitions and energy cost
+1. Metabolic power for preferred walking
+2. Inverse dynamics grid data for COM power, work
+3. Edot = v^3.42 plot
+
+## Todo: Mechanics story
+1. Some nice figures to show energy-time-slope tradeoff
+2. Step-to-step transition through prediction
+
+## Todo: Photos & video of brachistokuo
