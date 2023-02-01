@@ -6,21 +6,25 @@ and code for optimization of a pendulum-like model of locomotion.
 Dynamical model performs walking tasks specified by optimal control.
 Human experiments to test model are described in publications.
 
-## Optimization of energy and time predicts dynamic speeds for human walking (Carlisle and Kuo 2022)
+## [Optimization of energy and time predicts dynamic speeds for human walking (Carlisle and Kuo 2022)](src/shortwalks.ipynb)
 
-![short walks](img/shortwalks.svg)
+![short walks](img/shortwalks.svg) This [notebook](src/shortwalks.ipynb)
+demonstrates a dynamic optimization for taking short walking bouts of
+varying length. The model starts and ends at standing rest, and
+self-selects (optimizes) the steps to minimize an energy-time objective.
+Energy is expressed as the total push-off work performed by the model,
+and time is the total duration of the walk, scaled by a time valuation
+constant $c_t$.
 
-## Humans plan for the near future to walk economically on uneven terrain (Darici and Kuo 2022)
+## [Humans plan for the near future to walk economically on uneven terrain (Darici and Kuo 2022)](src/uneventerrain.ipynb)
 
 ![walking on uneven terrain](img/uneventerrainwalking.svg) This
-[notebook](src/shortwalks.ipynb) demonstrates a dynamic optimization for
-walking on uneven terrain. The model plans ahead for upcoming steps, and
-determines a trajectory of push-offs and forward walking speed that
+[notebook](src/uneventerrain.ipynb) demonstrates a dynamic optimization
+for walking on uneven terrain. The model plans ahead for upcoming steps,
+and determines a trajectory of push-offs and forward walking speed that
 minimizes the energy and time expended for the terrain. Energy is the
-push-off work performed by the model, and time is the total duration of
-the walk, scaled by a time valuation constant $c_t$.
-
-[HTML](src/shortwalks.html)
+push-off work performed by the model, and the time duration is set to
+equal the time to walk the same distance on flat ground.
 
 ### About the model
 
@@ -29,12 +33,13 @@ pendulums. There is a point mass for the body, and infinitesimal point
 masses for the feet. For the present publications, walking speed varies
 by relatively small amounts, for which modulation of the swing leg is
 treated as having low cost. For increasing speeds and step frequencies,
-the model’s swing leg cost increases sharply (Kuo 2001).
+the model’s swing leg cost increases sharply (Kuo 2001), and would
+add to the cost modeled in the two optimizations presented here.
 
 The optimization is performed withj the [Julia
 language](https://julialang.org), a fully open-source language. It uses
-open-source packages for optimization ([JuMP](https://jump.dev/), the
-model dynamics [DynLoco](https://github.com/kuo-lab/DynLoco). The
+open-source packages for optimization ([JuMP](https://jump.dev/) and for
+model dynamics [DynLoco](https://github.com/kuo-lab/DynLoco)). The
 emphasis here is on simplicity and code readability. The Julia code
 provides a minimal demonstration of the mechanics and optimization
 approach. The entire tool chain is open source.

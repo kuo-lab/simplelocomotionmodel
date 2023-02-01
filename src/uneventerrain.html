@@ -142,7 +142,7 @@ div.csl-indent {
 
 </header>
 
-<p>A simple walking model is optimized to walk over uneven terrain. The objective is to minimize energy expenditure, quantified by the push-off work performed with each step. The optimization here seeks to traverse a stretch of terrain in the same amount of time as level walking.</p>
+<p>A simple walking model is optimized to walk over uneven terrain. The objective is to minimize energy expenditure, quantified by the push-off work performed with each step. The optimization here seeks to traverse a stretch of terrain, starting and ending at level walking, and taking the same amount of time as level walking.</p>
 <section id="walk-over-a-single-upward-step" class="level2">
 <h2 class="anchored" data-anchor-id="walk-over-a-single-upward-step">Walk over a single upward step</h2>
 <p>The optimal compensation for a single upward step is to speed up beforehand, lose speed stepping upward, and then speed up again afterward. The optimal speed-ups both occur over several steps but have different shapes: the first one increases nearly exponentially with time, and the second one resembles a saturating exponential. The optimization is described by Darici et al. <span class="citation" data-cites="darici2020AnticipatoryControlMomentum">(<a href="#ref-darici2020AnticipatoryControlMomentum" role="doc-biblioref">2020</a>)</span>, and tested with human subjects experiment <span class="citation" data-cites="darici2022HumansOptimallyAnticipate">(<a href="#ref-darici2022HumansOptimallyAnticipate" role="doc-biblioref">Darici and Kuo 2022</a>)</span>.</p>
@@ -154,16 +154,16 @@ div.csl-indent {
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>wstar4s <span class="op">=</span> <span class="fu">findgait</span>(<span class="fu">WalkRW2l</span>(α<span class="op">=</span><span class="fl">0.4</span>,safety<span class="op">=</span><span class="cn">true</span>), target<span class="op">=:</span>speed<span class="op">=&gt;</span><span class="fl">0.45</span>, varying<span class="op">=:</span>P)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>nsteps <span class="op">=</span> <span class="fl">15</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>δs <span class="op">=</span> <span class="fu">zeros</span>(nsteps); δs[<span class="fu">Int</span>((nsteps<span class="op">+</span><span class="fl">1</span>)<span class="op">/</span><span class="fl">2</span>)] <span class="op">=</span> <span class="fl">0.05</span> <span class="co"># one bump</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>nominalresults <span class="op">=</span> <span class="fu">optwalk</span>(wstar4s, nsteps, boundarywork<span class="op">=</span><span class="cn">false</span>, δs<span class="op">=</span>δs)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>nominalresult <span class="op">=</span> <span class="fu">optwalk</span>(wstar4s, nsteps, boundarywork<span class="op">=</span><span class="cn">false</span>, δs<span class="op">=</span>δs)</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> <span class="fu">multistepplot</span>(nominalresults) <span class="co"># plot speed, push-off, terrain heights</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> <span class="fu">multistepplot</span>(nominalresult, boundarywork<span class="op">=</span><span class="cn">false</span>, legend<span class="op">=</span><span class="cn">false</span>) <span class="co"># plot speed, push-off, terrain heights</span></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">display</span>(p)</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> <span class="fu">plot</span>(<span class="fu">cumsum</span>(nominalresults.steps.tf), nominalresults.steps.vm,label<span class="op">=</span><span class="st">"normal"</span>,xlabel<span class="op">=</span><span class="st">"time"</span>,ylabel<span class="op">=</span><span class="st">"midstance speed"</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> <span class="fu">plot</span>(<span class="fu">cumsum</span>(nominalresult.steps.tf), nominalresult.steps.vm,xlabel<span class="op">=</span><span class="st">"time"</span>,ylabel<span class="op">=</span><span class="st">"midstance speed"</span>,legend<span class="op">=</span><span class="cn">false</span>)</span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">display</span>(p)</span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># step timings, per step</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">cumsum</span>(nominalresults.steps.tf),nominalresults.steps.tf, label<span class="op">=</span><span class="st">"normal"</span>,xlabel<span class="op">=</span><span class="st">"time"</span>,ylabel<span class="op">=</span><span class="st">"step time"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">cumsum</span>(nominalresult.steps.tf),nominalresult.steps.tf, xlabel<span class="op">=</span><span class="st">"time"</span>,ylabel<span class="op">=</span><span class="st">"step time"</span>, legend<span class="op">=</span><span class="cn">false</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <p><img src="uneventerrain_files/figure-html/cell-2-output-1.svg" class="img-fluid"></p>
@@ -171,15 +171,16 @@ div.csl-indent {
 <div class="cell-output cell-output-display">
 <p><img src="uneventerrain_files/figure-html/cell-2-output-2.svg" class="img-fluid"></p>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="2">
+<div class="cell-output cell-output-display" data-execution_count="16">
 <p><img src="uneventerrain_files/figure-html/cell-2-output-3.svg" class="img-fluid"></p>
 </div>
 </div>
 <p>The optimization is performed with <code>optwalk</code>, which computes the minimum-work trajectory for <code>nsteps</code> of walking. A terrain may be provided by an array of height/angle changes <code>δs</code>.</p>
-<p>All quantities are plotted in dimensionless form, with base units of body mass <span class="math inline">\(M\)</span>, leg length <span class="math inline">\(L\)</span>, and gravitational acceleration <span class="math inline">\(g\)</span>. Thus speed is normalized by <span class="math inline">\(\sqrt(gL)\)</span> and time by <span class="math inline">\(\sqrt(L/g)\)</span>. For a typical leg length of <span class="math inline">\(L = 1 \mathrm{m}\)</span>, the dimensional speed is about 1.25 m/s, and step time about 0.55 s.</p>
+<p>All quantities are plotted in dimensionless form, with base units of body mass <span class="math inline">\(M\)</span>, leg length <span class="math inline">\(L\)</span>, and gravitational acceleration <span class="math inline">\(g\)</span>. Thus speed is normalized by <span class="math inline">\(\sqrt(gL)\)</span> and time by <span class="math inline">\(\sqrt(L/g)\)</span>. For a typical leg length of <span class="math inline">\(L = 1\,\mathrm{m}\)</span>, the equivalent dimensional speed is about 1.25 m/s, and step time about 0.55 s.</p>
 </section>
 <section id="use-varying-step-lengths-to-walk-over-a-single-upward-step" class="level2">
 <h2 class="anchored" data-anchor-id="use-varying-step-lengths-to-walk-over-a-single-upward-step">Use varying step lengths to walk over a single upward step</h2>
+<p>The model above uses fixed step lengths, whereas humans adjust step length with speed. The model can also be constrained to step at the preferred step length vs speed relationship of human, resulting in a different amplitude of speed fluctuations, but a similarly-shaped speed profile.</p>
 <div class="cell" data-execution_count="2">
 <details>
 <summary>Code</summary>
@@ -187,27 +188,18 @@ div.csl-indent {
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>nominalmsr<span class="op">=</span><span class="fu">optwalk</span>(wstar4s, nsteps, boundarywork<span class="op">=</span><span class="cn">false</span>, δs<span class="op">=</span>δs)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># WalkRW2ls has varying step lengths according to preferred human</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>wstar4ls <span class="op">=</span> <span class="fu">findgait</span>(<span class="fu">WalkRW2ls</span>(α<span class="op">=</span><span class="fl">0.4</span>,safety<span class="op">=</span><span class="cn">true</span>), target<span class="op">=:</span>speed<span class="op">=&gt;</span><span class="fl">0.45</span>, varying<span class="op">=:</span>P, cstep<span class="op">=</span><span class="fl">0.35</span>, vmstar<span class="op">=</span>wstar4s.vm)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>wstar4lvs <span class="op">=</span> <span class="fu">findgait</span>(<span class="fu">WalkRW2lvs</span>(α<span class="op">=</span><span class="fl">0.4</span>,safety<span class="op">=</span><span class="cn">true</span>), target<span class="op">=:</span>speed<span class="op">=&gt;</span><span class="fl">0.45</span>, varying<span class="op">=:</span>P, c<span class="op">=</span><span class="fl">1</span>., vmstar<span class="op">=</span>wstar4s.vm)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>varyingmsr <span class="op">=</span> <span class="fu">optwalk</span>(wstar4ls, nsteps, boundarywork<span class="op">=</span><span class="cn">false</span>,δs<span class="op">=</span>δs)</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>varyingmsrv <span class="op">=</span> <span class="fu">optwalk</span>(wstar4lvs, nsteps, boundarywork<span class="op">=</span><span class="cn">false</span>,δs<span class="op">=</span>δs)</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">plotvees</span>(nominalmsr,boundaryvels<span class="op">=</span>nominalmsr.boundaryvels, speedtype<span class="op">=:</span>shortwalks)</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">plotvees!</span>(varyingmsr,boundaryvels<span class="op">=</span>(<span class="cn">nothing</span>,<span class="cn">nothing</span>), speedtype<span class="op">=:</span>shortwalks)</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">plotvees!</span>(varyingmsrv,boundaryvels<span class="op">=</span>(<span class="cn">nothing</span>,<span class="cn">nothing</span>), speedtype<span class="op">=:</span>shortwalks)</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">cumsum</span>(nominalmsr.steps.tf), nominalmsr.steps.vm,label<span class="op">=</span><span class="st">"normal"</span>)</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="fu">plot!</span>(<span class="fu">cumsum</span>(varyingmsr.steps.tf), varyingmsr.steps.vm, label<span class="op">=</span><span class="st">"varying"</span> )</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co"># step timings, per step, regular and varying step lengths</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">cumsum</span>(nominalmsr.steps.tf),nominalmsr.steps.tf, label<span class="op">=</span><span class="st">"normal"</span>)</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="fu">plot!</span>(<span class="fu">cumsum</span>(varyingmsr.steps.tf),varyingmsr.steps.tf, label<span class="op">=</span><span class="st">"varying"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>varyingmsr <span class="op">=</span> <span class="fu">optwalk</span>(wstar4ls, nsteps, boundarywork<span class="op">=</span><span class="cn">false</span>,δs<span class="op">=</span>δs)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plotvees</span>(nominalmsr,boundaryvels<span class="op">=</span>nominalmsr.boundaryvels, speedtype<span class="op">=:</span>midstance)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plotvees!</span>(varyingmsr,boundaryvels<span class="op">=</span>nominalmsr.boundaryvels, speedtype<span class="op">=:</span>midstance)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="3">
+<div class="cell-output cell-output-display" data-execution_count="17">
 <p><img src="uneventerrain_files/figure-html/cell-3-output-1.svg" class="img-fluid"></p>
 </div>
 </div>
 </section>
 <section id="walk-over-a-bunch-of-terrains" class="level2">
 <h2 class="anchored" data-anchor-id="walk-over-a-bunch-of-terrains">Walk over a bunch of terrains</h2>
+<p>The terrain is specified as a series of angle/height changes each step. The task is to start and end with nominal level walking, and to traverse the terrain in minimum energy, in the same amount of time as for level walking.</p>
 <div class="cell" data-execution_count="3">
 <details>
 <summary>Code</summary>
@@ -240,34 +232,69 @@ div.csl-indent {
 </section>
 <section id="walk-over-a-simple-bump-with-no-compensation" class="level2">
 <h2 class="anchored" data-anchor-id="walk-over-a-simple-bump-with-no-compensation">Walk over a simple bump with no compensation</h2>
+<p>Model walks with constant push-offs for steady walking, and encounters the up-step without any compensation. As a result of the unexpected upward step, the model loses speed, and with repeated constant push-offs, will eventually regain nominal speed. The number of regaining steps is described by the persistence distance. This model expends the same energy as level walking, but accumulates a relative time deficit. The same push-off impulses are applied in both cases, but the no-compensation case loses speed, resulting in slightly less work. More detail is available from <span class="citation" data-cites="darici2020AnticipatoryControlMomentum">Darici, Temeltas, and Kuo (<a href="#ref-darici2020AnticipatoryControlMomentum" role="doc-biblioref">2020</a>)</span>.</p>
 <div class="cell" data-execution_count="4">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>upstep <span class="op">=</span> δs[<span class="fl">1</span>][<span class="fl">2</span>] <span class="co"># first terrain, get the terrain array</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>nsteps <span class="op">=</span> <span class="fu">length</span>(upstep)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>nocompmsr <span class="op">=</span> <span class="fu">multistep</span>(wstar4s, Ps<span class="op">=</span><span class="fu">fill</span>(wstar4s.P,nsteps),δangles<span class="op">=</span>upstep,boundaryvels<span class="op">=</span>(wstar4s.vm,wstar4s.vm))</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>nocompmsr.totalcost</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">multistepplot</span>(nocompmsr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>nocompresult <span class="op">=</span> <span class="fu">multistep</span>(wstar4s, Ps<span class="op">=</span><span class="fu">fill</span>(wstar4s.P,nsteps),δangles<span class="op">=</span>upstep,boundaryvels<span class="op">=</span>(wstar4s.vm,wstar4s.vm))</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"No compensation total work cost = "</span>, nocompresult.totalcost)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"Nominal walking total work cost = "</span>, nominalresult.totalcost)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> <span class="fu">multistepplot</span>(nocompresult, legend<span class="op">=</span><span class="cn">false</span>, boundarywork<span class="op">=</span><span class="cn">false</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">display</span>(p)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">cumsum</span>(nominalresult.steps.tf),label<span class="op">=</span><span class="st">"nominal level"</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">plot!</span>(<span class="fu">cumsum</span>(nocompresult.steps.tf), xlabel<span class="op">=</span><span class="st">"step"</span>,ylabel<span class="op">=</span><span class="st">"accumulated time"</span>, label<span class="op">=</span><span class="st">"no compensation"</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"Final time deficit = "</span>, <span class="fu">-sum</span>(nominalresult.steps.tf)<span class="fu">+sum</span>(nocompresult.steps.tf))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="5">
-<p><img src="uneventerrain_files/figure-html/cell-5-output-1.svg" class="img-fluid"></p>
+<div class="cell-output cell-output-stdout">
+<pre><code>No compensation total work cost = 0.4375814868842951
+Nominal walking total work cost = 0.45851198026517315</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="uneventerrain_files/figure-html/cell-5-output-2.svg" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Final time deficit = 1.0701910000831205</code></pre>
 </div>
 </div>
 </section>
 <section id="walk-over-a-single-bump-with-a-reactive-compensation" class="level2">
 <h2 class="anchored" data-anchor-id="walk-over-a-single-bump-with-a-reactive-compensation">Walk over a single bump with a reactive compensation</h2>
+<p>Model does not anticipate the up-step and loses speed and time upon first contact with it. Thereafter, the model compensates and catches up to the level ground model by looking ahead and adjusting the trajectory of push-offs. It therefore actually anticipates and optimally compensates for all steps except the first uneven one. This is because there is no way to regain time without some knowledge and goal for the terrain ahead. A model that never looks ahead at all would be unable to walk the same number of steps in the same time as level walking. More detail is available from <span class="citation" data-cites="darici2020AnticipatoryControlMomentum">Darici, Temeltas, and Kuo (<a href="#ref-darici2020AnticipatoryControlMomentum" role="doc-biblioref">2020</a>)</span>.</p>
 <div class="cell" data-execution_count="5">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>nbump <span class="op">=</span> <span class="fu">Int</span>((nsteps<span class="op">+</span><span class="fl">1</span>)<span class="op">/</span><span class="fl">2</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>reactmsr1 <span class="op">=</span> <span class="fu">multistep</span>(wstar4s, Ps<span class="op">=</span><span class="fu">fill</span>(wstar4s.P,nbump),δangles<span class="op">=</span>upstep[<span class="fl">1</span><span class="op">:</span>nbump],boundaryvels<span class="op">=</span>(wstar4s.vm,wstar4s.vm))</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>reactmsr2 <span class="op">=</span> <span class="fu">optwalk</span>(wstar4s, nsteps<span class="op">-</span>nbump, totaltime <span class="op">=</span> nominalmsr.totaltime <span class="op">-</span> reactmsr1.totaltime <span class="op">-</span> <span class="fl">2</span>,boundaryvels<span class="op">=</span>(reactmsr1.steps[<span class="kw">end</span>].vm,wstar4s.vm), boundarywork<span class="op">=</span>(<span class="cn">false</span>,<span class="cn">false</span>))</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">multistepplot</span>(reactmsr2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>nbump <span class="op">=</span> <span class="fu">Int</span>(<span class="fu">floor</span>((nsteps<span class="op">+</span><span class="fl">1</span>)<span class="op">/</span><span class="fl">2</span>))</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>reactresults1 <span class="op">=</span> <span class="fu">multistep</span>(wstar4s, Ps<span class="op">=</span><span class="fu">fill</span>(wstar4s.P,nbump),δangles<span class="op">=</span>upstep[<span class="fl">1</span><span class="op">:</span>nbump],boundaryvels<span class="op">=</span>(wstar4s.vm,wstar4s.vm))</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>reactresults2 <span class="op">=</span> <span class="fu">optwalk</span>(wstar4s, nsteps<span class="op">-</span>nbump, totaltime <span class="op">=</span> nominalmsr.totaltime <span class="op">-</span> reactresults1.totaltime,boundaryvels<span class="op">=</span>(reactresults1.steps[<span class="kw">end</span>].vm,wstar4s.vm), boundarywork<span class="op">=</span>(<span class="cn">false</span>,<span class="cn">false</span>))</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>reactresult <span class="op">=</span> <span class="fu">cat</span>(reactresults1, reactresults2)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"Reactive contrl total work cost = "</span>, reactresult.totalcost)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"Nominal walking total work cost = "</span>, nominalresult.totalcost)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="fu">multistepplot</span>(reactresult,boundarywork<span class="op">=</span><span class="cn">false</span>) <span class="co"># plot concatenation of two simulations</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> <span class="fu">plot</span>(<span class="fu">cumsum</span>(nominalresult.steps.tf),label<span class="op">=</span><span class="st">"nominal level"</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="fu">plot!</span>(p, <span class="fu">cumsum</span>(reactresult.steps.tf), xlabel<span class="op">=</span><span class="st">"step"</span>,ylabel<span class="op">=</span><span class="st">"accumulated time"</span>, label<span class="op">=</span><span class="st">"reactive"</span>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="fu">display</span>(p)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"Final time deficit = "</span>, <span class="fu">-sum</span>(nominalresult.steps.tf)<span class="fu">+sum</span>(reactresult.steps.tf))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="6">
-<p><img src="uneventerrain_files/figure-html/cell-6-output-1.svg" class="img-fluid"></p>
+<div class="cell-output cell-output-stdout">
+<pre><code>Reactive contrl total work cost = 0.4629932213996102
+Nominal walking total work cost = 0.45851198026517315</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="uneventerrain_files/figure-html/cell-6-output-2.svg" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Final time deficit = 0.0</code></pre>
 </div>
 </div>
+</section>
+<section id="julia-code" class="level1">
+<h1>Julia code</h1>
+<p>This page is viewable as <a href="uneventerrain.ipynb">Jupyter notebook</a>, <a href="uneventerrain.jl">plain Julia</a> text, or <a href="uneventerrain.html">HTML</a>.</p>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+
 <ol type="1">
 <li>Plot uneven terrain profile</li>
 <li>Draw a stick figure model (see Matlab walkrw2 animation)</li>
@@ -296,12 +323,12 @@ div.csl-indent {
 <li>Step-to-step transition through prediction</li>
 </ol>
 </section>
-<section id="todo-photos-video-of-brachistokuo" class="level2 unnumbered">
-
-
+<section id="todo-photos-video-of-brachistokuo" class="level2">
+<h2 class="anchored" data-anchor-id="todo-photos-video-of-brachistokuo">Todo: Photos &amp; video of brachistokuo</h2>
+</section>
 </section>
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">Todo: Photos &amp; video of brachistokuo</h2><div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography">
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography">
 <div id="ref-darici2022HumansOptimallyAnticipate" class="csl-entry" role="doc-biblioentry">
 Darici, Osman, and Arthur D. Kuo. 2022. <span>“Humans Optimally Anticipate and Compensate for an Uneven Step During Walking.”</span> Edited by Lena H Ting. <em>eLife</em> 11 (January): e65402. <a href="https://doi.org/10.7554/eLife.65402">https://doi.org/10.7554/eLife.65402</a>.
 </div>

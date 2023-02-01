@@ -109,7 +109,7 @@ Minimization of cost of transport is not energetically optimal, because it is le
 ```
 
 # Julia code
-This page is also viewable as [plain Julia](shortwalks.jl) text or [HTML].
+This page is viewable as [Jupyter notebook](shortwalks.ipynb), [plain Julia](shortwalks.jl) text, or [HTML](shortwalks.html).
 
 ## References
 ::: {#refs}

@@ -161,7 +161,7 @@ div.csl-indent {
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> <span class="fu">optwalktime</span>(wstar4, nsteps, ctime<span class="op">=</span>ctime) <span class="co"># optimize work and time</span></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">multistepplot</span>(result) <span class="co"># plot speed, push-off, terrain trajectories</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="23">
+<div class="cell-output cell-output-display" data-execution_count="2">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="shortwalks_files/figure-html/cell-2-output-1.svg" class="img-fluid figure-img"></p>
@@ -258,7 +258,7 @@ div.csl-indent {
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>threecosts <span class="op">=</span> [<span class="fl">1</span><span class="op">/</span><span class="fl">2</span><span class="op">*</span>nominalresult.vm0<span class="op">^</span><span class="fl">2</span> <span class="op">+</span> <span class="fu">sum</span>(nominalresult.steps.Pwork), <span class="fl">1</span><span class="op">/</span><span class="fl">2</span><span class="op">*</span>minvarresult.vm0<span class="op">^</span><span class="fl">2</span> <span class="op">+</span> <span class="fu">sum</span>(minvarresult.steps.Pwork), <span class="fl">1</span><span class="op">/</span><span class="fl">2</span><span class="op">*</span>constaccelresult.vm0<span class="op">^</span><span class="fl">2</span> <span class="op">+</span> <span class="fu">sum</span>(constaccelresult.steps.Pwork)]</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">bar</span>(threecosts,xticks<span class="op">=</span>((<span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span>),(<span class="st">"Energy-Time"</span>, <span class="st">"Steady min-COT"</span>, <span class="st">"Steady accel"</span>)),legend<span class="op">=</span><span class="cn">false</span>,ylabel<span class="op">=</span><span class="st">"Total work"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="26">
+<div class="cell-output cell-output-display" data-execution_count="5">
 <p><img src="shortwalks_files/figure-html/cell-5-output-1.svg" class="img-fluid"></p>
 </div>
 </div>
@@ -274,7 +274,7 @@ div.csl-indent {
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="st">Minimization of cost of transport is not energetically optimal, because it is less costly to vary speed dynamically. In particular, the fast speed-up of minCOT is very costly. </span></span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="27">
+<div class="cell-output cell-output-display" data-execution_count="6">
 <p>The energy-time work is 0.21077394712113307. The min-COT work is 0.23455721768541665. The const accel work is 0.2752584233181397.</p>
 <p>Minimization of cost of transport is not energetically optimal, because it is less costly to vary speed dynamically. In particular, the fast speed-up of minCOT is very costly.</p>
 </div>
@@ -282,7 +282,7 @@ div.csl-indent {
 </section>
 <section id="julia-code" class="level1">
 <h1>Julia code</h1>
-<p>This page is also viewable as <a href="shortwalks.jl">plain Julia</a> text or [HTML].</p>
+<p>This page is viewable as <a href="shortwalks.ipynb">Jupyter notebook</a>, <a href="shortwalks.jl">plain Julia</a> text, or <a href="shortwalks.html">HTML</a>.</p>
 <section id="references" class="level2">
 
 
