@@ -31,7 +31,7 @@ Users are invited to view the notebooks and source code in this repository. Moti
 * Run Julia from the `simplelocomotionmodel` directory
 * Install packages using package manager, from the Julia prompt:
     * `Using Pkg` 
-    * `Pkg.activate()` activates an environment with relevant packages
+    * `Pkg.activate(".")` activates an environment with relevant packages. The environment is described by the `.toml` files in the current directory (i.e. `simplelocomotionmodel`) and lists the relevant packages. This includes the dynamic walking model [DynLoco](https://github.com/kuo-lab/DynLoco).
     * `Pkg.instantiate()` downloads and installs packages (can take several minutes)
 * The Jupyter notebooks have file extension `ipynb` and can be opened and executed with a variety of viewers. A recommended workflow uses the [VS Code](https://code.visualstudio.com/) editing environment, which can open, execute, and render Jupyter notebooks.
 
