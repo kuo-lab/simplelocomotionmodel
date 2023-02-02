@@ -11,7 +11,7 @@ Notebooks and code for optimization of a pendulum-like model of locomotion. Dyna
 ![short walks](img/shortwalks.svg)
 This [notebook](src/shortwalks.ipynb) demonstrates a dynamic optimization for taking short walking bouts of varying length. The model starts and ends at standing rest, and self-selects (optimizes) the steps to minimize an energy-time objective.  Energy is expressed as the total
 push-off work performed by the model, and time is the total duration of
-the walk, scaled by a time valuation constant $c_t$. 
+the walk, scaled by a time valuation constant $c_t$. Human experimental data and code are available in a [separate repository](https://github.com/kuo-lab/short_walk_experiment).
 
 ## [Humans plan for the near future to walk economically on uneven terrain [@darici2022HumansPlanFuture]](src/uneventerrain.ipynb)
 ![walking on uneven terrain](img/uneventerrainwalking.svg)
