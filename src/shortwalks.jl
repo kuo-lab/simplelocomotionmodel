@@ -38,7 +38,7 @@ tchange = 1.75 # boundary condition time to get up to speed (arbitrary, excluded
 p = plot() 
 nsteps = 10
 result = optwalktime(wstar4, nsteps, ctime=ctime) # optimize work and time
-multistepplot(result) # plot speed, push-off, terrain trajectories
+multistepplot(result, legend=false) # plot speed, push-off, terrain trajectories
 # -
 
 # All quantities are plotted dimensionlessly, with base units of body mass
@@ -48,6 +48,12 @@ multistepplot(result) # plot speed, push-off, terrain trajectories
 # and step time about 0.55 s.
 #
 # ### Go for walks of verying distance
+#
+# The predicted speed profile varies with distance. Shorter walks have
+# very brief and slower peaks, and are dominated by speeding up and
+# slowing down. Longer walks have flatter and faster peaks, approching a
+# steady walking speed. Relatively less time is spent speeding up and
+# slowing down.
 
 p = plot() 
 walksteps = [1, 2, 3, 4, 5, 6, 7, 10, 15, 20] # take walks of this # of steps
@@ -350,6 +356,14 @@ p1=plot(morectimes, mps.*cpeaks',legend=false,xlabel="c_t",ylabel="peak speed",l
 plot!(p1,morectimes, mps.*(cpeaks .* middle(cpeaks[:,end])./ maximum(cpeaks,dims=2))',linewidth=1,legend=false, xlabel="valuation of time c_t",ylabel="peak speed")
 # -
 
+# ## Experimental data
+#
+# The data from accompanying human subjects experiment are available in a
+# [separate data and code
+# repository](https://bitbucket.org/hbcl/short_walk_experiment/). The code
+# is in Matlab, and the data files are in .mat format, which is compatible
+# with HDF5.
+#
 # # Julia code
 #
 # This page is viewable as [Jupyter notebook](shortwalks.ipynb), [plain

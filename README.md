@@ -14,7 +14,8 @@ varying length. The model starts and ends at standing rest, and
 self-selects (optimizes) the steps to minimize an energy-time objective.
 Energy is expressed as the total push-off work performed by the model,
 and time is the total duration of the walk, scaled by a time valuation
-constant $c_t$.
+constant $c_t$. Human experimental data and code are available in a
+[separate repository](https://github.com/kuo-lab/short_walk_experiment).
 
 ## [Humans plan for the near future to walk economically on uneven terrain (Darici and Kuo 2022)](src/uneventerrain.ipynb)
 
@@ -33,8 +34,7 @@ pendulums. There is a point mass for the body, and infinitesimal point
 masses for the feet. For the present publications, walking speed varies
 by relatively small amounts, for which modulation of the swing leg is
 treated as having low cost. For increasing speeds and step frequencies,
-the model’s swing leg cost increases sharply (Kuo 2001), and would
-add to the cost modeled in the two optimizations presented here.
+the model’s swing leg cost increases sharply (Kuo 2001).
 
 The optimization is performed withj the [Julia
 language](https://julialang.org), a fully open-source language. It uses
@@ -60,7 +60,11 @@ the code themselves, which necessitates installation of Julia.
 - Run Julia from the `simplelocomotionmodel` directory
 - Install packages using package manager, from the Julia prompt:
   - `Using Pkg`
-  - `Pkg.activate()` activates an environment with relevant packages
+  - `Pkg.activate(".")` activates an environment with relevant packages.
+    The environment is described by the `.toml` files in the current
+    directory (i.e. `simplelocomotionmodel`) and lists the relevant
+    packages. This includes the dynamic walking model
+    [DynLoco](https://github.com/kuo-lab/DynLoco).
   - `Pkg.instantiate()` downloads and installs packages (can take
     several minutes)
 - The Jupyter notebooks have file extension `ipynb` and can be opened
