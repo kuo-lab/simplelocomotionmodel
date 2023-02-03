@@ -107,6 +107,9 @@ println("Final time deficit = ", -sum(nominalresult.steps.tf)+sum(reactresult.st
 # Julia code
 This page is viewable as [Jupyter notebook](uneventerrain.ipynb), [plain Julia](uneventerrain.jl) text, or [HTML](uneventerrain.html).
 
+# Matlab code
+There is also extensive Matlab code for an earlier implementation of the same model. See [Matlab directory](../matlab). There is very limited documentation of this code.
+
 ## References
 ::: {#refs}
 :::
