@@ -274,9 +274,9 @@ version = "0.6.8"
 
 [[deps.DynLoco]]
 deps = ["Dierckx", "Documenter", "Example", "FFTW", "ForwardDiff", "GR", "Ipopt", "JuMP", "LsqFit", "Parameters", "PlotlyBase", "PlotlyJS", "Plots", "Setfield", "StructArrays", "ToeplitzMatrices"]
-git-tree-sha1 = "aa869dfed7b7c805dcaf1f469ce3f97c10b2b0eb"
+git-tree-sha1 = "77e3d615eb5f9db35cb930399f590b3a5df142d0"
 repo-rev = "master"
-repo-url = "https://bitbucket.org/hbcl/dynloco.git"
+repo-url = "https://github.com/kuo-lab/DynLoco"
 uuid = "086b9634-299f-4133-910a-656d08a98501"
 version = "0.1.2"
 
@@ -1034,15 +1034,15 @@ version = "3.4.0"
 
 [[deps.Rmath]]
 deps = ["Random", "Rmath_jll"]
-git-tree-sha1 = "bf3188feca147ce108c76ad82c2792c57abe7b1f"
+git-tree-sha1 = "f65dcb5fa46aee0cf9ed6274ccbd597adc49aa7b"
 uuid = "79098fc4-a85e-5d69-aa6a-4863f24498fa"
-version = "0.7.0"
+version = "0.7.1"
 
 [[deps.Rmath_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "68db32dff12bb6127bac73c209881191bf0efbb7"
+git-tree-sha1 = "6ed52fdd3382cf21947b15e8870ac0ddbff736da"
 uuid = "f50d1b31-88e8-58de-be2c-1cc44531875f"
-version = "0.3.0+0"
+version = "0.4.0+0"
 
 [[deps.SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"

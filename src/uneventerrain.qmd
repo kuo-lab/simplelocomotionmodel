@@ -111,21 +111,3 @@ This page is viewable as [Jupyter notebook](uneventerrain.ipynb), [plain Julia](
 ::: {#refs}
 :::
 
-1. Plot uneven terrain profile
-2. Draw a stick figure model (see Matlab walkrw2 animation)
-3. Generate automatic superposition figure
-
-## Todo: Short walks
-1. Analyze ramp data (from Emily)
-2. Analyze different speed data 
-
-## Step-to-step transitions and energy cost
-1. Metabolic power for preferred walking
-2. Inverse dynamics grid data for COM power, work
-3. Edot = v^3.42 plot
-
-## Todo: Mechanics story
-1. Some nice figures to show energy-time-slope tradeoff
-2. Step-to-step transition through prediction
-
-## Todo: Photos & video of brachistokuo

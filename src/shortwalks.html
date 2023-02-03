@@ -161,7 +161,7 @@ div.csl-indent {
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> <span class="fu">optwalktime</span>(wstar4, nsteps, ctime<span class="op">=</span>ctime) <span class="co"># optimize work and time</span></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">multistepplot</span>(result, legend<span class="op">=</span><span class="cn">false</span>) <span class="co"># plot speed, push-off, terrain trajectories</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="13">
+<div class="cell-output cell-output-display" data-execution_count="46">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="shortwalks_files/figure-html/cell-2-output-1.svg" class="img-fluid figure-img"></p>
@@ -265,7 +265,7 @@ div.csl-indent {
 The min-COT work is 0.23455721768541665
 The const accel work is 0.2752584233181397</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="16">
+<div class="cell-output cell-output-display" data-execution_count="49">
 <p><img src="shortwalks_files/figure-html/cell-5-output-2.svg" class="img-fluid"></p>
 </div>
 </div>
@@ -412,7 +412,7 @@ The const accel work is 0.2752584233181397</code></pre>
 Peak speeds over a range of 2.102877847668059
   about 0.9904474300431949 to 2.0827899599175943m/s</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="18">
+<div class="cell-output cell-output-display" data-execution_count="51">
 <p><img src="shortwalks_files/figure-html/cell-7-output-2.svg" class="img-fluid"></p>
 </div>
 </div>
@@ -432,7 +432,7 @@ Peak speeds over a range of 2.102877847668059
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot!</span>(p1, distancevss, peakspeedvss, linestyle<span class="op">=:</span>dashdot, linewidth<span class="op">=</span><span class="fl">0.2</span>)</span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot!</span>(p1, distances, (peaks <span class="op">.*</span> <span class="fu">middle</span>(peaks[<span class="kw">end</span>,<span class="op">:</span>]) <span class="op">./</span> <span class="fu">maximum</span>(peaks,dims<span class="op">=</span><span class="fl">1</span>)), linewidth<span class="op">=</span><span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="19">
+<div class="cell-output cell-output-display" data-execution_count="52">
 <p><img src="shortwalks_files/figure-html/cell-8-output-1.svg" class="img-fluid"></p>
 </div>
 </div>
@@ -446,7 +446,7 @@ Peak speeds over a range of 2.102877847668059
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot!</span>(distances44, durations44 <span class="op">.*</span> <span class="fu">middle</span>(durations[<span class="kw">end</span>,<span class="op">:</span>])<span class="op">./</span> <span class="fu">maximum</span>(durations44,dims<span class="op">=</span><span class="fl">1</span>), linewidth<span class="op">=</span><span class="fl">0.5</span>,xlabel<span class="op">=</span><span class="st">"Distance"</span>, ylabel<span class="op">=</span><span class="st">"Duration"</span>,legend<span class="op">=</span><span class="cn">false</span>,linestyle<span class="op">=:</span>dash)</span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot!</span>(distancevss, durationvss <span class="op">.*</span> <span class="fu">middle</span>(durations[<span class="kw">end</span>,<span class="op">:</span>])<span class="op">./</span> <span class="fu">maximum</span>(durationvss,dims<span class="op">=</span><span class="fl">1</span>), linewidth<span class="op">=</span><span class="fl">0.5</span>,xlabel<span class="op">=</span><span class="st">"Distance"</span>, ylabel<span class="op">=</span><span class="st">"Duration"</span>,legend<span class="op">=</span><span class="cn">false</span>,linestyle<span class="op">=:</span>dash)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="20">
+<div class="cell-output cell-output-display" data-execution_count="53">
 <p><img src="shortwalks_files/figure-html/cell-9-output-1.svg" class="img-fluid"></p>
 </div>
 </div>
@@ -468,14 +468,14 @@ Peak speeds over a range of 2.102877847668059
 <span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>p1<span class="op">=</span><span class="fu">plot</span>(morectimes, mps<span class="op">.*</span>cpeaks<span class="op">'</span>,legend<span class="op">=</span><span class="cn">false</span>,xlabel<span class="op">=</span><span class="st">"c_t"</span>,ylabel<span class="op">=</span><span class="st">"peak speed"</span>,linewidth<span class="op">=</span><span class="fl">0.2</span>)</span>
 <span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="fu">plot!</span>(p1,morectimes, mps<span class="op">.*</span>(cpeaks <span class="op">.*</span> <span class="fu">middle</span>(cpeaks[<span class="op">:</span>,<span class="kw">end</span>])<span class="op">./</span> <span class="fu">maximum</span>(cpeaks,dims<span class="op">=</span><span class="fl">2</span>))<span class="ch">',linewidth=1,legend=false, xlabel="valuation of time c_t",ylabel="peak speed")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="21">
+<div class="cell-output cell-output-display" data-execution_count="54">
 <p><img src="shortwalks_files/figure-html/cell-10-output-1.svg" class="img-fluid"></p>
 </div>
 </div>
 </section>
 <section id="experimental-data" class="level2">
 <h2 class="anchored" data-anchor-id="experimental-data">Experimental data</h2>
-<p>The data from accompanying human subjects experiment are available in a <a href="https://bitbucket.org/hbcl/short_walk_experiment/">separate data and code repository</a>. The code is in Matlab, and the data files are in .mat format, which is compatible with HDF5.</p>
+<p>The data from accompanying human subjects experiment are available in a <a href="https://github.com/kuo-lab/short_walk_experiment/">separate data and code repository</a>. The code is in Matlab, and the data files are in .mat format, which is compatible with HDF5.</p>
 </section>
 <section id="julia-code" class="level1">
 <h1>Julia code</h1>
