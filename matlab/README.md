@@ -4,13 +4,11 @@ Humans plan for the near future to walk economically on uneven terrain
 Osman Darici, Arthur D. Kuo
 Faculty of Kinesiology and Biomedical Engineering Program, University of Calgary, Calgary, Alberta, Canada
 
-Published in The Proceedings of the National Academy of Sciences, 2023
-
 ### What is this repository for? ###
 
 This repository is for running the simple walker in MATLAB in the paper "Humans plan for the near future to walk economically on uneven terrain", PNAS 2023
 
-The main file OPTIMIZATION_RIMLESS_WHEEL_MPC_MS_v5 has the explanations about how the optimization and the model works. Please read the papers below before running the model.
+The main file OPTIMIZATION_RIMLESS_WHEEL_MPC_MS_v5 has the explanations about how the optimization and the model works. 
 
 To run, all you need to do is running the main file OPTIMIZATION_RIMLESS_WHEEL_MPC_MS_v5.
 
