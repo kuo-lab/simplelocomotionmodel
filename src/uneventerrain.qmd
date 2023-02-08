@@ -110,6 +110,9 @@ This page is viewable as [Jupyter notebook](uneventerrain.ipynb), [plain Julia](
 # Matlab code
 There is also extensive Matlab code for an earlier implementation of the same model. See [Matlab directory](../matlab). There is very limited documentation of this code.
 
+## Experimental data
+The data from accompanying human subjects experiment are available in a [separate data and code repository](https://github.com/kuo-lab/uneventerrainexperiment/). The code is in Matlab, and the data files are in .mat format, which is compatible with HDF5. 
+
 ## References
 ::: {#refs}
 :::

@@ -25,7 +25,9 @@ for walking on uneven terrain. The model plans ahead for upcoming steps,
 and determines a trajectory of push-offs and forward walking speed that
 minimizes the energy and time expended for the terrain. Energy is the
 push-off work performed by the model, and the time duration is set to
-equal the time to walk the same distance on flat ground.
+equal the time to walk the same distance on flat ground. Human
+experimental data and code are available in a [separate
+repository](https://github.com/kuo-lab/uneventerrainexperiment).
 
 ### About the model
 

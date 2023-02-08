@@ -164,6 +164,14 @@ println("Final time deficit = ", -sum(nominalresult.steps.tf)+sum(reactresult.st
 # same model. See [Matlab directory](../matlab). There is very limited
 # documentation of this code.
 #
+# ## Experimental data
+#
+# The data from accompanying human subjects experiment are available in a
+# [separate data and code
+# repository](https://github.com/kuo-lab/uneventerrainexperiment/). The
+# code is in Matlab, and the data files are in .mat format, which is
+# compatible with HDF5.
+#
 # ## References
 #
 # Darici, Osman, and Arthur D. Kuo. 2022. “Humans Optimally Anticipate and
