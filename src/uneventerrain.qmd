@@ -79,19 +79,19 @@ display(p)
 ```
 
 ## Walk over a simple bump with no compensation
-Model walks with constant push-offs for steady walking, and encounters the up-step without any compensation. As a result of the unexpected upward step, the model loses speed, and with repeated constant push-offs, will eventually regain nominal speed. The number of regaining steps is described by the persistence distance. This model expends the same energy as level walking, but accumulates a relative time deficit. The same push-off impulses are applied in both cases, but the no-compensation case loses speed, resulting in slightly less work. More detail is available from @darici2020AnticipatoryControlMomentum.
+Model walks with constant push-offs for steady walking, and encounters the up-step without any compensation. As a result of the unexpected upward step, the model loses speed, and with repeated constant push-offs, will eventually regain nominal speed. The number of regaining steps is described by the persistence distance. This model expends the same energy as level walking, but accumulates a time deficit compared to minimum-work compensation. Walking over a bump generally requires more time or more work. More detail is available from @darici2020AnticipatoryControlMomentum.
 
 ```{julia}
 upstep = δs[2][2] # up-step terrain, get the terrain array
 nsteps = length(upstep)
 nocompresult = multistep(wstar4s, Ps=fill(wstar4s.P,nsteps),δangles=upstep,boundaryvels=(wstar4s.vm,wstar4s.vm))
 println("No compensation total work cost = ", nocompresult.totalcost)
-println("Nominal walking total work cost = ", upstepresult.totalcost)
+println("Min-work compensation total work cost = ", upstepresult.totalcost)
 p = multistepplot(upstepresult, legend=false, boundarywork=false)
 display(p)
-plot(cumsum(upstepresult.steps.tf),label="nominal level")
+plot(cumsum(upstepresult.steps.tf),label="min work")
 plot!(cumsum(nocompresult.steps.tf), xlabel="step",ylabel="accumulated time", label="no compensation")
-println("Final time deficit = ", -sum(upstepresult.steps.tf)+sum(upstepresult.steps.tf))
+println("Final time deficit = ", -sum(upstepresult.steps.tf)+sum(nocompresult.steps.tf))
 ```
 
 ## Walk over a single bump with a reactive compensation

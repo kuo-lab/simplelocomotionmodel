@@ -173,7 +173,7 @@ div.csl-indent {
 <div class="cell-output cell-output-display">
 <p><img src="uneventerrain_files/figure-html/cell-2-output-2.svg" class="img-fluid"></p>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="9">
+<div class="cell-output cell-output-display" data-execution_count="2">
 <p><img src="uneventerrain_files/figure-html/cell-2-output-3.svg" class="img-fluid"></p>
 </div>
 </div>
@@ -192,7 +192,7 @@ div.csl-indent {
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plotvees</span>(upstepresult,boundaryvels<span class="op">=</span>upstepresult.boundaryvels, speedtype<span class="op">=:</span>midstance)</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plotvees!</span>(varyingresult,boundaryvels<span class="op">=</span>upstepresult.boundaryvels, speedtype<span class="op">=:</span>midstance)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="10">
+<div class="cell-output cell-output-display" data-execution_count="3">
 <p><img src="uneventerrain_files/figure-html/cell-3-output-1.svg" class="img-fluid"></p>
 </div>
 </div>
@@ -239,7 +239,7 @@ div.csl-indent {
 </section>
 <section id="walk-over-a-simple-bump-with-no-compensation" class="level2">
 <h2 class="anchored" data-anchor-id="walk-over-a-simple-bump-with-no-compensation">Walk over a simple bump with no compensation</h2>
-<p>Model walks with constant push-offs for steady walking, and encounters the up-step without any compensation. As a result of the unexpected upward step, the model loses speed, and with repeated constant push-offs, will eventually regain nominal speed. The number of regaining steps is described by the persistence distance. This model expends the same energy as level walking, but accumulates a relative time deficit. The same push-off impulses are applied in both cases, but the no-compensation case loses speed, resulting in slightly less work. More detail is available from <span class="citation" data-cites="darici2020AnticipatoryControlMomentum">Darici, Temeltas, and Kuo (<a href="#ref-darici2020AnticipatoryControlMomentum" role="doc-biblioref">2020</a>)</span>.</p>
+<p>Model walks with constant push-offs for steady walking, and encounters the up-step without any compensation. As a result of the unexpected upward step, the model loses speed, and with repeated constant push-offs, will eventually regain nominal speed. The number of regaining steps is described by the persistence distance. This model expends the same energy as level walking, but accumulates a time deficit compared to minimum-work compensation. Walking over a bump generally requires more time or more work. More detail is available from <span class="citation" data-cites="darici2020AnticipatoryControlMomentum">Darici, Temeltas, and Kuo (<a href="#ref-darici2020AnticipatoryControlMomentum" role="doc-biblioref">2020</a>)</span>.</p>
 <div class="cell" data-execution_count="4">
 <details>
 <summary>Code</summary>
@@ -247,22 +247,22 @@ div.csl-indent {
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>nsteps <span class="op">=</span> <span class="fu">length</span>(upstep)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>nocompresult <span class="op">=</span> <span class="fu">multistep</span>(wstar4s, Ps<span class="op">=</span><span class="fu">fill</span>(wstar4s.P,nsteps),δangles<span class="op">=</span>upstep,boundaryvels<span class="op">=</span>(wstar4s.vm,wstar4s.vm))</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"No compensation total work cost = "</span>, nocompresult.totalcost)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"Nominal walking total work cost = "</span>, upstepresult.totalcost)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"Min-work compensation total work cost = "</span>, upstepresult.totalcost)</span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> <span class="fu">multistepplot</span>(upstepresult, legend<span class="op">=</span><span class="cn">false</span>, boundarywork<span class="op">=</span><span class="cn">false</span>)</span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">display</span>(p)</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">cumsum</span>(upstepresult.steps.tf),label<span class="op">=</span><span class="st">"nominal level"</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">cumsum</span>(upstepresult.steps.tf),label<span class="op">=</span><span class="st">"min work"</span>)</span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">plot!</span>(<span class="fu">cumsum</span>(nocompresult.steps.tf), xlabel<span class="op">=</span><span class="st">"step"</span>,ylabel<span class="op">=</span><span class="st">"accumulated time"</span>, label<span class="op">=</span><span class="st">"no compensation"</span>)</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"Final time deficit = "</span>, <span class="fu">-sum</span>(upstepresult.steps.tf)<span class="fu">+sum</span>(upstepresult.steps.tf))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"Final time deficit = "</span>, <span class="fu">-sum</span>(upstepresult.steps.tf)<span class="fu">+sum</span>(nocompresult.steps.tf))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>No compensation total work cost = 0.4433306466750797
-Nominal walking total work cost = 0.5538343313152624</code></pre>
+Min-work compensation total work cost = 0.5538343313152624</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <p><img src="uneventerrain_files/figure-html/cell-5-output-2.svg" class="img-fluid"></p>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Final time deficit = 0.0</code></pre>
+<pre><code>Final time deficit = -1.2734506601085016</code></pre>
 </div>
 </div>
 </section>
