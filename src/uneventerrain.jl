@@ -34,19 +34,21 @@
 # +
 using DynLoco, Plots; 
 
-wstar4s = findgait(WalkRW2l(α=0.4,safety=true), target=:speed=>0.45, varying=:P)
+wstar4s = findgait(WalkRW2l(α=0.4102,safety=true), target=:speed=>0.4789, varying=:P)
 nsteps = 15
-δs = zeros(nsteps); δs[Int((nsteps+1)/2)] = 0.05 # one bump
-nominalresult = optwalk(wstar4s, nsteps, boundarywork=false, δs=δs)
+bumpHeightDimless = 0.075
+B  = asin(bumpHeightDimless / (2*sin(wstar4s.α)))
+δs = zeros(nsteps); δs[Int((nsteps+1)/2)] = B # one bump
+upstepresult = optwalk(wstar4s, nsteps, boundarywork=false, δs=δs)
 
-p = multistepplot(nominalresult, boundarywork=false, legend=false) # plot speed, push-off, terrain heights
+p = multistepplot(upstepresult, boundarywork=false, legend=false) # plot speed, push-off, terrain heights
 display(p)
 
-p = plot(cumsum(nominalresult.steps.tf), nominalresult.steps.vm,xlabel="time",ylabel="midstance speed",legend=false)
+p = plot(cumsum(upstepresult.steps.tf), upstepresult.steps.vm,xlabel="time",ylabel="midstance speed",legend=false)
 display(p)
 
 # step timings, per step
-plot(cumsum(nominalresult.steps.tf),nominalresult.steps.tf, xlabel="time",ylabel="step time", legend=false)
+plot(cumsum(upstepresult.steps.tf),upstepresult.steps.tf, xlabel="time",ylabel="step time", legend=false)
 # -
 
 # The optimization is performed with `optwalk`, which computes the
@@ -67,13 +69,11 @@ plot(cumsum(nominalresult.steps.tf),nominalresult.steps.tf, xlabel="time",ylabel
 # different amplitude of speed fluctuations, but a similarly-shaped speed
 # profile.
 
-δs = zeros(nsteps); δs[Int((nsteps+1)/2)] = 0.05 # one bump
-nominalmsr=optwalk(wstar4s, nsteps, boundarywork=false, δs=δs)
 # WalkRW2ls has varying step lengths according to preferred human
-wstar4ls = findgait(WalkRW2ls(α=0.4,safety=true), target=:speed=>0.45, varying=:P, cstep=0.35, vmstar=wstar4s.vm)
-varyingmsr = optwalk(wstar4ls, nsteps, boundarywork=false,δs=δs)
-plotvees(nominalmsr,boundaryvels=nominalmsr.boundaryvels, speedtype=:midstance)
-plotvees!(varyingmsr,boundaryvels=nominalmsr.boundaryvels, speedtype=:midstance)
+wstar4ls = findgait(WalkRW2ls(α=0.4102,safety=true), target=:speed=>0.4789, varying=:P, cstep=0.35, vmstar=wstar4s.vm)
+varyingresult = optwalk(wstar4ls, nsteps, boundarywork=false,δs=δs)
+plotvees(upstepresult,boundaryvels=upstepresult.boundaryvels, speedtype=:midstance)
+plotvees!(varyingresult,boundaryvels=upstepresult.boundaryvels, speedtype=:midstance)
 
 # ## Walk over a bunch of terrains
 #
@@ -81,27 +81,35 @@ plotvees!(varyingmsr,boundaryvels=nominalmsr.boundaryvels, speedtype=:midstance)
 # The task is to start and end with nominal level walking, and to traverse
 # the terrain in minimum energy, in the same amount of time as for level
 # walking.
+#
+# Note that terrain profile is not plotted to scale.
 
 # +
-B = 0.05 # bump height, nondimensionalized to leg length L (nominal L = 1 m)
-# (bump height affects amplitude of velocity change, but not the shape)
+## plot bumps and speed trajectories of all 8 terrains
+numStepsBefore = 6; numStepsAfter = 6
+# all terrain trajectories
+wstar4s = findgait(WalkRW2l(α=0.4102,safety=true), target=:speed=>0.4789, varying=:P)
 
-# A bunch of terrains
 δs = ( # terrain defined a sequence of height or angle changes from previous step
-    "U" =>    [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0] .* B, # Up
-    "D" =>    [0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0] .* B, # Down
-    "UD" =>   [0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0] .* B, # Up-Down
-    "DnUD" => [0, 0, 0, 0, 0, 0, -1, 0, 1, -1, 0, 0, 0, 0, 0] .* B, # Down & Up-Down
-    "P" =>    [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, -1, -1, -1, 0, 0, 0, 0, 0, 0] .* B, # Pyramid
-    "C1" =>   [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0] .* B, # Complex 1
-    "C2" =>   [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0] .* B, # Complex 2
+    "level" =>[zeros(numStepsBefore); [0] .* B; zeros(numStepsAfter)], # level   
+    "U" =>    [zeros(numStepsBefore); [1] .* B; zeros(numStepsAfter)], # Up
+    "D" =>    [zeros(numStepsBefore); [-1] .* B; zeros(numStepsAfter)], # Down
+    "UD" =>   [zeros(numStepsBefore); [1, -1] .* B; zeros(numStepsAfter)], # Up-Down
+    "DnUD" => [zeros(numStepsBefore); [-1, 0, 5/3, -5/3] .* B; zeros(numStepsAfter)] , # Down & Up-Down
+    "P" =>    [zeros(numStepsBefore); [ 1, 1, 1, 0, 0, 0, -1, -1, -1] .* B; zeros(numStepsAfter)], # Pyramid
+    "C1" =>   [zeros(numStepsBefore); [ 3, 2, -3, 2, -1, 3, 1, -3, -2, 3, -1, -2, -1, 3, -2, -2] .* B/3; zeros(numStepsAfter)], # Complex 1
+    "C2" =>   [zeros(numStepsBefore); [ 2, 2, -3, 1, 2, 1, -3, 2, 3, -1,  -3,  1, -2, 3, -2, -3] .* B/3; zeros(numStepsAfter)], # Complex 2
 )
-p = plot(layout=(2,4), legend=false); plotnum = 1;
-for (terrainname, terrainbumps) in δs
-    results = optwalk(wstar4s, length(terrainbumps), δs=terrainbumps, boundarywork = false) # optimize push-offs (boundarywork=false means start from nominal walking)
-    plotvees!(p[plotnum], results, boundaryvels=results.boundaryvels, speedtype=:midstance, 
-        usespline=false,title=terrainname)
-    plotnum = plotnum + 1
+
+p = plot(layout=(4,4), legend=false); 
+pslotnum(n) = n + (n>4 ? 4 : 0) # plot in slots 1 - 4, 9 - 12
+for (i,(terrainname, terrainbumps)) in enumerate(δs)
+    # plot the terrain profile in space (not to scale)
+    plotterrain!(p[pslotnum(i)], cumsum(terrainbumps)./B .* bumpHeightDimless, setfirstbumpstep=true,ylims=(-0.1,0.2),showaxis=false,grid=false)
+    # minimum-work strategy for terrain
+    results = optwalk(wstar4s, length(terrainbumps), δs=terrainbumps, boundarywork = false) # optimizing push-offs (boundarywork=false means start from nominal walking)
+    plotvees!(p[pslotnum(i)+4], results, boundaryvels=results.boundaryvels, speedtype=:midstance, setfirstbumpstep=true,title=terrainname, tchange = 0, ylims=(0.3,0.575))
+    vline!(p[pslotnum(i)+4], [0]) # mark where the first uneven step is
 end
 display(p)
 # -
@@ -118,40 +126,39 @@ display(p)
 # no-compensation case loses speed, resulting in slightly less work. More
 # detail is available from Darici, Temeltas, and Kuo (2020).
 
-upstep = δs[1][2] # first terrain, get the terrain array
+upstep = δs[2][2] # up-step terrain, get the terrain array
 nsteps = length(upstep)
 nocompresult = multistep(wstar4s, Ps=fill(wstar4s.P,nsteps),δangles=upstep,boundaryvels=(wstar4s.vm,wstar4s.vm))
 println("No compensation total work cost = ", nocompresult.totalcost)
-println("Nominal walking total work cost = ", nominalresult.totalcost)
-p = multistepplot(nocompresult, legend=false, boundarywork=false)
+println("Nominal walking total work cost = ", upstepresult.totalcost)
+p = multistepplot(upstepresult, legend=false, boundarywork=false)
 display(p)
-plot(cumsum(nominalresult.steps.tf),label="nominal level")
+plot(cumsum(upstepresult.steps.tf),label="nominal level")
 plot!(cumsum(nocompresult.steps.tf), xlabel="step",ylabel="accumulated time", label="no compensation")
-println("Final time deficit = ", -sum(nominalresult.steps.tf)+sum(nocompresult.steps.tf))
+println("Final time deficit = ", -sum(upstepresult.steps.tf)+sum(upstepresult.steps.tf))
 
 # ## Walk over a single bump with a reactive compensation
 #
-# Model does not anticipate the up-step and loses speed and time upon
-# first contact with it. Thereafter, the model compensates and catches up
-# to the level ground model by looking ahead and adjusting the trajectory
-# of push-offs. It therefore actually anticipates and optimally
-# compensates for all steps except the first uneven one. This is because
-# there is no way to regain time without some knowledge and goal for the
-# terrain ahead. A model that never looks ahead at all would be unable to
-# walk the same number of steps in the same time as level walking. More
-# detail is available from Darici, Temeltas, and Kuo (2020).
+# Here the model does not anticipate the up-step and loses speed and time
+# upon first contact with it. Thereafter, the model compensates and
+# catches up to the level ground model by looking ahead and adjusting the
+# trajectory of push-offs. This strategy therefore actually anticipates
+# and optimally compensates for all steps other the first uneven one. It
+# is almost impossible to regain time without some knowledge and goal for
+# the terrain ahead. More detail is available from Darici, Temeltas, and
+# Kuo (2020).
 
 nbump = Int(floor((nsteps+1)/2))
 reactresults1 = multistep(wstar4s, Ps=fill(wstar4s.P,nbump),δangles=upstep[1:nbump],boundaryvels=(wstar4s.vm,wstar4s.vm))
-reactresults2 = optwalk(wstar4s, nsteps-nbump, totaltime = nominalmsr.totaltime - reactresults1.totaltime,boundaryvels=(reactresults1.steps[end].vm,wstar4s.vm), boundarywork=(false,false))
+reactresults2 = optwalk(wstar4s, length(upstepresult.steps)-nbump, totaltime = upstepresult.totaltime - reactresults1.totaltime,boundaryvels=(reactresults1.steps[end].vm,wstar4s.vm), boundarywork=(false,false))
 reactresult = cat(reactresults1, reactresults2)
 println("Reactive contrl total work cost = ", reactresult.totalcost)
-println("Nominal walking total work cost = ", nominalresult.totalcost)
+println("Up-step min-work control total work cost = ", upstepresult.totalcost)
 multistepplot(reactresult,boundarywork=false) # plot concatenation of two simulations
-p = plot(cumsum(nominalresult.steps.tf),label="nominal level")
+p = plot(cumsum(upstepresult.steps.tf),label="up-step min-work")
 plot!(p, cumsum(reactresult.steps.tf), xlabel="step",ylabel="accumulated time", label="reactive")
 display(p)
-println("Final time deficit = ", -sum(nominalresult.steps.tf)+sum(reactresult.steps.tf))
+println("Final time deficit = ", -sum(upstepresult.steps.tf)+sum(reactresult.steps.tf))
 
 # # Julia code
 #

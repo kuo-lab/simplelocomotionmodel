@@ -274,7 +274,7 @@ version = "0.6.8"
 
 [[deps.DynLoco]]
 deps = ["Dierckx", "Documenter", "Example", "FFTW", "ForwardDiff", "GR", "Ipopt", "JuMP", "LsqFit", "Parameters", "PlotlyBase", "PlotlyJS", "Plots", "Setfield", "StructArrays", "ToeplitzMatrices"]
-git-tree-sha1 = "77e3d615eb5f9db35cb930399f590b3a5df142d0"
+git-tree-sha1 = "dcdebef55fefe3608d2ddfe34ccf9a7a6a1457c7"
 repo-rev = "master"
 repo-url = "https://github.com/kuo-lab/DynLoco"
 uuid = "086b9634-299f-4133-910a-656d08a98501"
@@ -954,9 +954,9 @@ version = "0.19.9"
 
 [[deps.Polynomials]]
 deps = ["LinearAlgebra", "RecipesBase"]
-git-tree-sha1 = "c687954bd0b4b0508249fd36999f1b82456c2a10"
+git-tree-sha1 = "a14a99e430e42a105c898fcc7f212334bc7be887"
 uuid = "f27b6e38-b328-58d1-80ce-0feddd5e7a45"
-version = "3.2.3"
+version = "3.2.4"
 
 [[deps.PrecompileSignatures]]
 git-tree-sha1 = "18ef344185f25ee9d51d80e179f8dad33dc48eb1"
@@ -985,9 +985,9 @@ version = "5.15.3+2"
 
 [[deps.QuadGK]]
 deps = ["DataStructures", "LinearAlgebra"]
-git-tree-sha1 = "de191bc385072cc6c7ed3ffdc1caeed3f22c74d4"
+git-tree-sha1 = "786efa36b7eff813723c4849c90456609cf06661"
 uuid = "1fd47b50-473d-5c70-9696-f719f8f3bcdc"
-version = "2.7.0"
+version = "2.8.1"
 
 [[deps.REPL]]
 deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
