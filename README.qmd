@@ -42,5 +42,8 @@ The model equations are implemented in the [DynLoco](https://github.com/kuo-lab/
 ::: {#refs}
 :::
 
+This repository
+[![DOI](https://zenodo.org/badge/594247526.svg)](https://zenodo.org/badge/latestdoi/594247526)
+
 ### Issues and pull requests
 Please file an [issue](https://github.com/kuo-lab/simplelocomotionmodel/issues) for bugs or problems. Pull requests are welcomed.

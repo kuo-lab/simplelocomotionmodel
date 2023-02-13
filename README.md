@@ -127,6 +127,9 @@ Simplest Walking Model](https://www.ncbi.nlm.nih.gov/pubmed/11871597).”
 
 </div>
 
+This repository
+[![DOI](https://zenodo.org/badge/594247526.svg)](https://zenodo.org/badge/latestdoi/594247526)
+
 ### Issues and pull requests
 
 Please file an
