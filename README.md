@@ -6,7 +6,7 @@ and code for optimization of a pendulum-like model of locomotion.
 Dynamical model performs walking tasks specified by optimal control.
 Human experiments to test model are described in publications.
 
-## [Optimization of energy and time predicts dynamic speeds for human walking (Carlisle and Kuo 2022)](src/shortwalks.ipynb)
+## [Optimization of energy and time predicts dynamic speeds for human walking (Carlisle and Kuo 2023)](src/shortwalks.ipynb)
 
 ![short walks](img/shortwalks.svg) This [notebook](src/shortwalks.ipynb)
 demonstrates a dynamic optimization for taking short walking bouts of
@@ -89,11 +89,12 @@ Quarto is not necessary to open and interact with Jupyter notebooks.
 
 <div id="refs" class="references csl-bib-body hanging-indent">
 
-<div id="ref-carlisle2022OptimizationEnergyTime" class="csl-entry">
+<div id="ref-carlisle2023OptimizationEnergyTime" class="csl-entry">
 
-Carlisle, R. Elizabeth, and Arthur D. Kuo. 2022. “Optimization of Energy
-and Time Predicts Dynamic Speeds for Human Walking.” bioRxiv.
-<https://doi.org/10.1101/2022.07.15.500158>.
+Carlisle, Rebecca Elizabeth, and Arthur D Kuo. 2023. “Optimization of
+Energy and Time Predicts Dynamic Speeds for Human Walking.” Edited by
+Gordon J Berman. *eLife* 12 (February): e81939.
+<https://doi.org/10.7554/eLife.81939>.
 
 </div>
 
