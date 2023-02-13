@@ -360,7 +360,7 @@ plot!(p1,morectimes, mps.*(cpeaks .* middle(cpeaks[:,end])./ maximum(cpeaks,dims
 #
 # The data from accompanying human subjects experiment are available in a
 # [separate data and code
-# repository](https://bitbucket.org/hbcl/short_walk_experiment/). The code
+# repository](https://github.com/kuo-lab/short_walk_experiment/). The code
 # is in Matlab, and the data files are in .mat format, which is compatible
 # with HDF5.
 #

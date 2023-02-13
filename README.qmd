@@ -15,7 +15,7 @@ the walk, scaled by a time valuation constant $c_t$. Human experimental data and
 
 ## [Humans plan for the near future to walk economically on uneven terrain [@darici2022HumansPlanFuture]](src/uneventerrain.ipynb)
 ![walking on uneven terrain](img/uneventerrainwalking.svg)
-This [notebook](src/uneventerrain.ipynb) demonstrates a dynamic optimization for walking on uneven terrain. The model plans ahead for upcoming steps, and determines a trajectory of push-offs and forward walking speed that minimizes the energy and time expended for the terrain. Energy is the push-off work performed by the model, and the time duration is set to equal the time to walk the same distance on flat ground. Human experimental data and code are available in a [separate repository](https://github.com/kuo-lab/uneventerrainexperiment).
+This [notebook](src/uneventerrain.ipynb) demonstrates a dynamic optimization for walking on uneven terrain. The model plans ahead for upcoming steps, and determines a trajectory of push-offs and forward walking speed that minimizes the energy and time expended for the terrain. Energy is the push-off work performed by the model, and the time duration is set to equal the time to walk the same distance on flat ground. Human experimental data and code are available in a [separate repository](https://github.com/kuo-lab/uneventerrainexperiment). Additional Matlab optimization code is also available in a [sub-directory of this repository](./matlab).
 
 
 ### About the model

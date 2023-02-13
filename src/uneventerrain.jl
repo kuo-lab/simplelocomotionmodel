@@ -131,7 +131,7 @@ nsteps = length(upstep)
 nocompresult = multistep(wstar4s, Ps=fill(wstar4s.P,nsteps),δangles=upstep,boundaryvels=(wstar4s.vm,wstar4s.vm))
 println("No compensation total work cost = ", nocompresult.totalcost)
 println("Min-work compensation total work cost = ", upstepresult.totalcost)
-p = multistepplot(upstepresult, legend=false, boundarywork=false)
+p = multistepplot(nocompresult, legend=false, boundarywork=false)
 display(p)
 plot(cumsum(upstepresult.steps.tf),label="min work")
 plot!(cumsum(nocompresult.steps.tf), xlabel="step",ylabel="accumulated time", label="no compensation")
@@ -154,7 +154,8 @@ reactresults2 = optwalk(wstar4s, length(upstepresult.steps)-nbump, totaltime = u
 reactresult = cat(reactresults1, reactresults2)
 println("Reactive contrl total work cost = ", reactresult.totalcost)
 println("Up-step min-work control total work cost = ", upstepresult.totalcost)
-multistepplot(reactresult,boundarywork=false) # plot concatenation of two simulations
+p = multistepplot(reactresult,boundarywork=false) # plot concatenation of two simulations
+display(p)
 p = plot(cumsum(upstepresult.steps.tf),label="up-step min-work")
 plot!(p, cumsum(reactresult.steps.tf), xlabel="step",ylabel="accumulated time", label="reactive")
 display(p)

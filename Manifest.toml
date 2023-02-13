@@ -274,7 +274,7 @@ version = "0.6.8"
 
 [[deps.DynLoco]]
 deps = ["Dierckx", "Documenter", "Example", "FFTW", "ForwardDiff", "GR", "Ipopt", "JuMP", "LsqFit", "Parameters", "PlotlyBase", "PlotlyJS", "Plots", "Setfield", "StructArrays", "ToeplitzMatrices"]
-git-tree-sha1 = "dcdebef55fefe3608d2ddfe34ccf9a7a6a1457c7"
+git-tree-sha1 = "9920943368a17cbe20aee57dea00e812d7467fbe"
 repo-rev = "master"
 repo-url = "https://github.com/kuo-lab/DynLoco"
 uuid = "086b9634-299f-4133-910a-656d08a98501"

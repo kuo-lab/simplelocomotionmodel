@@ -28,6 +28,8 @@ push-off work performed by the model, and the time duration is set to
 equal the time to walk the same distance on flat ground. Human
 experimental data and code are available in a [separate
 repository](https://github.com/kuo-lab/uneventerrainexperiment).
+Additional Matlab optimization code is also available in a
+[sub-directory of this repository](./matlab).
 
 ### About the model
 
