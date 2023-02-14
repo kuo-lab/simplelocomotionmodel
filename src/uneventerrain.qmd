@@ -4,8 +4,6 @@ format:
     html:
         code-fold: true
 jupyter: julia-1.8
-execute:
-    keep-ipynb: true
 bibliography: simplelocomotionmodel.bib
 ---
 A simple walking model is optimized to walk over uneven terrain. The objective is to minimize energy expenditure, quantified by the push-off work performed with each step. The optimization here seeks to traverse a stretch of terrain, starting and ending at level walking, and taking the same amount of time as level walking. 

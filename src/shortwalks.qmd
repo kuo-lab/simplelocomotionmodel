@@ -5,8 +5,6 @@ format:
         code-fold: true
     ipynb: default
 jupyter: julia-1.8
-execute:
-    keep-ipynb: true
 bibliography: simplelocomotionmodel.bib
 ---
 ## Optimization of energy and time predicts dynamic speeds for human walking [@carlisle2022OptimizationEnergyTime]
