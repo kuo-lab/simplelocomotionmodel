@@ -54,6 +54,8 @@ the code themselves, which necessitates installation of Julia.
 
 ### Installation
 
+- Clone or download this repository. From GitHub page, Code -\> Clone or
+  Download ZIP, to create `simplelocomotionmodel` directory.
 - Install Julia according to the [Getting Started
   guide](https://docs.julialang.org/en/v1/manual/getting-started/)
 - The Jupyter notebooks also require installation of

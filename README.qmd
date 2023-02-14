@@ -26,6 +26,7 @@ The optimization is performed withj the [Julia language](https://julialang.org),
 Users are invited to view the notebooks and source code in this repository. Motivated individuals may also wish to execute and modify the code themselves, which necessitates installation of Julia.
 
 ### Installation
+* Clone or download this repository. From GitHub page, Code -> Clone or Download ZIP, to create `simplelocomotionmodel` directory.
 * Install Julia according to the [Getting Started guide](https://docs.julialang.org/en/v1/manual/getting-started/)
 * The Jupyter notebooks also require installation of [Jupyter](https://jupyter.org/). Assuming a [Python](https://www.python.org/) installation, Jupyter may be installed with [`pip`](https://jupyter.org/install) or [`conda`](https://anaconda.org/main/jupyter).
 * Run Julia from the `simplelocomotionmodel` directory
